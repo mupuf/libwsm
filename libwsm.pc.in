@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+plugindir=${libdir}/libwsm/
+ 
+Name: libwsm
+Description: LibWSM is a library for Wayland compositors to delegate their security-decisions to a user-defined backend.
+Version: @LIBWSM_VERSION@
+URL: http://libwsm.mupuf.org
+Libs: -L${libdir} -lwsm
+Cflags: -I${includedir}

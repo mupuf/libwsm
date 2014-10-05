@@ -1,0 +1,22 @@
+WSM_SCREENSHOT [allow/deny/unsure]
+Ability to take a still screenshot of the whole screen
+WSM_SCREENSHARING [allow/deny/unsure]
+Ability to record the screen continuously
+
+WSM_VIRTUAL_KEYBOARD [allow/inject-only/filter-only/deny/unsure]
+Ability to inject or filter input on the keyboard
+
+WSM_VIRTUAL_POINTING [allow/deny/unsure]
+Ability to modify the position of the pointer and simulate clicks
+
+WSM_GLOBAL_KEYBOARD_SEQUENCE [allow/deny/unsure] [key sequence]
+Ability to receive global keyboard sequences when not on focus
+
+WSM_FORWARD_RESERVED_KEYBOARD_SEQUENCE [allow/deny/unsure] [key sequence]
+Ability to receive reserved keyboard sequences instead of compositor when on focus
+
+WSM_CLIPBOARD_COPY [allow/deny/unsure] [default-allow]
+Ability to copy to the clipboard
+
+WSM_CLIPBOARD_PASTE [allow/deny/unsure]
+Ability to paste from the clipboard

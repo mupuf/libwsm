@@ -1,0 +1,86 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+IF(NOT CMAKE_BUILD_TYPE)
+  SET(CMAKE_BUILD_TYPE "Release" CACHE
+	STRING "Choose the type of build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel."
+	FORCE)
+ENDIF(NOT CMAKE_BUILD_TYPE)
+
+SET(CMAKE_PROJECT_NAME "LibWSM")
+
+INCLUDE(CheckIncludeFiles)
+INCLUDE(CheckLibraryExists)
+INCLUDE(CheckFunctionExists)
+INCLUDE(FindPkgConfig)
+INCLUDE(FeatureSummary)
+
+INCLUDE_DIRECTORIES("include/" ${CMAKE_SOURCE_DIR}/src)
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR})
+ADD_DEFINITIONS("-Wall")
+
+OPTION(WSM_LIB "PPassKeeper library" ON)
+OPTION(WSM_BUILD_BACKENDS "Build the integrated WSM backends" ON)
+OPTION(WSM_BE_DEFAULT "Example backend" ON)
+
+IF(NOT WSM_BUILD_BACKENDS)
+  SET(WSM_BE_EXAMPLE OFF)
+ENDIF(NOT WSM_BUILD_BACKENDS)
+
+#Tell libWSM where to find the backends
+IF(NOT WSM_DIRECTORY_PATH)
+  SET(WSM_DIRECTORY_PATH ${CMAKE_INSTALL_PREFIX}/lib/wsm)
+ENDIF(NOT WSM_DIRECTORY_PATH)
+ADD_DEFINITIONS(-DDIRECTORY_PATH="${WSM_DIRECTORY_PATH}")
+
+# libWSM library
+IF(WSM_LIB)
+  ADD_LIBRARY(wsm SHARED "src/main.c" "src/module.c" "src/module.h" "include/libwsm.h")
+  SET_PROPERTY(TARGET wsm PROPERTY VERSION 0.1.0)
+  SET_PROPERTY(TARGET wsm PROPERTY SOVERSION 1)
+  TARGET_LINK_LIBRARIES(wsm)
+  INSTALL(TARGETS wsm DESTINATION lib)
+  INSTALL(FILES "${CMAKE_SOURCE_DIR}/include/wsm.h" DESTINATION include)
+  INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/include/wsm" DESTINATION include)
+ENDIF(WSM_LIB)
+
+# Example backend
+IF(WSM_BE_DEFAULT)
+   FILE(GLOB wsm_be_default_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "backends/default/*.[ch]")
+   ADD_LIBRARY(wsm_default MODULE ${wsm_be_default_SOURCES})
+   TARGET_LINK_LIBRARIES(wsm_default wsm)
+   INSTALL(TARGETS wsm_default DESTINATION lib/wsm/)
+ENDIF(WSM_BE_DEFAULT)
+
+#PKG-CONFIG
+set(LIBWSM_VERSION "0.1")
+configure_file(libwsm.pc.in libwsm.pc @ONLY)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libwsm.pc" DESTINATION lib/pkgconfig)
+
+# Test
+add_executable(test_base "tests/base.c")
+target_link_libraries(test_base wsm "dl")
+
+
+#Final summary
+MESSAGE("")
+MESSAGE("")
+MESSAGE(" -------------------")
+MESSAGE("|      Summary      |")
+MESSAGE(" -------------------")
+MESSAGE("")
+
+MESSAGE("Library : ${WSM_LIB} (-DWSM_LIB=OFF to deactivate)")
+MESSAGE("")
+
+MESSAGE("Backends : ${WSM_BUILD_BACKENDS} (-DWSM_BUILD_BACKENDS=OFF to deactivate)")
+MESSAGE("	Default : ${WSM_BE_DEFAULT} (-DWSM_BE_DEFAULT=OFF to deactivate)")
+MESSAGE("")
+
+MESSAGE("Options :")
+MESSAGE("	Build type: ${CMAKE_BUILD_TYPE} (-DCMAKE_BUILD_TYPE=Debug to debug)")
+MESSAGE("	Prefix: '${CMAKE_INSTALL_PREFIX}' (-DCMAKE_INSTALL_PREFIX=/your/prefix)")
+MESSAGE("	Backends directory: '${WSM_DIRECTORY_PATH}' (-DWSM_DIRECTORY_PATH=/your/prefix)")
+MESSAGE("")
+
+MESSAGE("")
+MESSAGE("")
