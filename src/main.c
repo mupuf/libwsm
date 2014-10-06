@@ -31,6 +31,5 @@ wsm_t *wsm_init()
 
 void wsm_fini(wsm_t *wsm)
 {
-
+	wsm_unload_module(wsm);
 }
-

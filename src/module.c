@@ -31,6 +31,11 @@ THE SOFTWARE.
 #include "module.h"
 #include "debug.h"
 
+struct wsm_priv_t *wsm_priv(wsm_t *wsm)
+{
+	return (struct wsm_priv_t*) wsm;
+}
+
 wsm_t *load_backend(const char *dir_path, const char *filename)
 {
 	char path[PATH_MAX];
@@ -95,9 +100,8 @@ wsm_t *wsm_load_module(void)
 
 	backend_dir = opendir(DIRECTORY_PATH);
 	if(backend_dir == NULL) {
-		fprintf(stderr, "WSM: Could not open the backend "
-				"directory '"DIRECTORY_PATH"': %s\n",
-				strerror(errno));
+		DEBUG("Could not open the backend directory '"
+		      DIRECTORY_PATH"': %s.\n", strerror(errno));
 		return NULL;
 	}
 
@@ -106,5 +110,18 @@ wsm_t *wsm_load_module(void)
 	closedir(backend_dir);
 
 	return wsm;
+}
+
+void wsm_unload_module(wsm_t *wsm)
+{
+	struct wsm_priv_t *wsm_p = wsm_priv(wsm);
+
+	if (!wsm)
+		return;
+
+	wsm_p->dtor(wsm_p->user);
+	dlclose(wsm_p->dlhandle);
+
+	free(wsm);
 }
 

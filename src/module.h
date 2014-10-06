@@ -59,6 +59,8 @@ struct wsm_priv_t
 	_getABIVersion getABIVersion;
 };
 
+struct wsm_priv_t *wsm_priv(wsm_t *wsm);
 wsm_t *wsm_load_module(void);
+void wsm_unload_module(wsm_t *wsm);
 
 #endif
