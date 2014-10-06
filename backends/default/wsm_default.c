@@ -246,6 +246,15 @@ int scan_policy_folder (struct wsm_default_t *global, const char *path, const ui
   return created_files;
 }
 
+static void _free_policy_list(struct wsm_default_t *global)
+{
+	struct wsm_app_policy_t *policy;
+
+	wl_list_for_each(policy, &global->app_policies, link) {
+		wsm_app_policy_free(policy);
+	}
+}
+
 static int _init_policy_list(struct wsm_default_t *global)
 {
 	if(!global)
