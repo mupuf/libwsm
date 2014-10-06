@@ -39,9 +39,6 @@ typedef void (*_dtor)(void *);
 /** Returns the name of the module */
 typedef const char* (*_getModuleName)(void);
 
-/** Returns the name of the module */
-typedef const char* (*_getModuleName)(void);
-
 /** Version of libwsm's ABI used by the module */
 typedef unsigned int (*_getABIVersion)(void);
 
