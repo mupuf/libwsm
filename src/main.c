@@ -74,7 +74,7 @@ wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd)
 	client_p->info.uid = cr.uid;
 	client_p->info.gid = cr.gid;
 	client_p->info.pid = cr.pid;
-	client_p->info.fullpath = NULL;
+	client_p->info.fullpath = wsm_get_path_from_pid(cr.pid);
 	client_p->user = wsm_p->client_new(client_p->info);
 
 	return (wsm_client_t *)client_p;
