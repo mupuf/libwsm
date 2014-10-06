@@ -30,13 +30,23 @@ THE SOFTWARE.
  * \date 05-10-2014
  */
 
-typedef struct wsm_t
-{
+#include <sys/types.h>
 
-} wsm_t;
+typedef struct wsm_t {} wsm_t;
+typedef struct wsm_client_t {} wsm_client_t;
+typedef struct wsm_client_info_t {
+	int fd;
+	pid_t pid;
+	uid_t uid;
+	gid_t gid;
+	const char *fullpath; /* TODO: Check for ABI problems */
+} wsm_client_info_t;
 
 wsm_t *wsm_init();
 void wsm_fini(wsm_t *wsm);
+
+wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd);
+void wsm_client_free(wsm_client_t *wsm_client);
 
 //
 #endif

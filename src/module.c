@@ -36,7 +36,7 @@ struct wsm_priv_t *wsm_priv(wsm_t *wsm)
 	return (struct wsm_priv_t*) wsm;
 }
 
-wsm_t *load_backend(const char *dir_path, const char *filename)
+static wsm_t *load_backend(const char *dir_path, const char *filename)
 {
 	char path[PATH_MAX];
 	struct wsm_priv_t *w_p;
@@ -63,10 +63,12 @@ wsm_t *load_backend(const char *dir_path, const char *filename)
 	w_p->dtor = (_dtor)dlsym(dlhandle, "dtor");
 	w_p->getModuleName = (_getModuleName)dlsym(dlhandle, "getModuleName");
 	w_p->getABIVersion = (_getABIVersion)dlsym(dlhandle, "getABIVersion");
+	w_p->client_new = (_client_new)dlsym(dlhandle, "client_new");
+	w_p->client_free = (_client_free)dlsym(dlhandle, "client_free");
 
 	/* if minimal functions are here, add the lib to available modules */
-	if(w_p->ctor == NULL || w_p->dtor == NULL ||
-	   w_p->getModuleName == NULL || w_p->getABIVersion == NULL) {
+	if(!w_p->ctor || !w_p->dtor || !w_p->getModuleName ||
+	   !w_p->getABIVersion || !w_p->client_new || !w_p->client_free) {
 		DEBUG("not all symbols are present, check version numbers\n");
 		goto error;
 	}

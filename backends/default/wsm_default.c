@@ -17,9 +17,16 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <sys/types.h>
 #include <malloc.h>
 
+#include <libwsm.h>
+
 struct wsm_default_t{
+	/* */
+};
+
+struct wsm_default_client_t{
 	/* */
 };
 
@@ -31,7 +38,6 @@ void *ctor(void)
 
 	return user;
 }
-
 
 void dtor(void *user)
 {
@@ -48,3 +54,16 @@ unsigned int getABIVersion()
 	return 1;
 }
 
+void *client_new(wsm_client_info_t info)
+{
+	void *user = malloc(sizeof(struct wsm_default_client_t));
+
+	/* init */
+
+	return user;
+}
+
+void client_free(void *user)
+{
+	free(user);
+}

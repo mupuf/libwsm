@@ -45,6 +45,12 @@ typedef const char* (*_getModuleName)(void);
 /** Version of libwsm's ABI used by the module */
 typedef unsigned int (*_getABIVersion)(void);
 
+/** Allocate a new client */
+typedef void * (*_client_new)(wsm_client_info_t info);
+
+/** Free a client */
+typedef void * (*_client_free)(void *user);
+
 struct wsm_priv_t
 {
 	wsm_t base;
@@ -57,6 +63,19 @@ struct wsm_priv_t
 	_dtor dtor;
 	_getModuleName getModuleName;
 	_getABIVersion getABIVersion;
+
+	_client_new client_new;
+	_client_free client_free;
+};
+
+struct wsm_client_priv_t
+{
+	wsm_client_t base;
+
+	/* priv */
+	struct wsm_priv_t *wsm_p;
+	wsm_client_info_t info;
+	void *user;
 };
 
 struct wsm_priv_t *wsm_priv(wsm_t *wsm);

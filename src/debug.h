@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DEBUG(format, args...) do { \
 if (getenv("LIBWSM_DEBUG") && strcmp(getenv("LIBWSM_DEBUG"), "1") == 0) \
