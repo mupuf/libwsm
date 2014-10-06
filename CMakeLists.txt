@@ -57,7 +57,7 @@ configure_file(libwsm.pc.in libwsm.pc @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libwsm.pc" DESTINATION lib/pkgconfig)
 
 # Test
-add_executable(test_base "tests/base.c")
+add_executable(test_base "tests/base.c" "tests/unix_socket.c" "tests/unix_socket.h")
 target_link_libraries(test_base wsm "dl")
 
 

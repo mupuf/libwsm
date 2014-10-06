@@ -56,8 +56,8 @@ wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd)
 		return NULL;
 
 	cr_len = sizeof (cr);
-	if (!getsockopt (client_fd, SOL_SOCKET, SO_PEERCRED, &cr, &cr_len) ||
-	    cr_len == sizeof (cr)) {
+	if (getsockopt (client_fd, SOL_SOCKET, SO_PEERCRED, &cr, &cr_len) ||
+	    cr_len != sizeof (cr)) {
 		DEBUG("Failed to retrieve the peer credentials: %s.\n",
 		      strerror(errno));
 		return NULL;
