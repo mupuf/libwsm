@@ -63,27 +63,27 @@ static wsm_t *load_backend(const char *dir_path, const char *filename)
 	w_p->dlhandle = dlhandle;
 	w_p->ctor = (_ctor)dlsym(dlhandle, "ctor");
 	w_p->dtor = (_dtor)dlsym(dlhandle, "dtor");
-	w_p->getModuleName = (_getModuleName)dlsym(dlhandle, "getModuleName");
-	w_p->getABIVersion = (_getABIVersion)dlsym(dlhandle, "getABIVersion");
+	w_p->get_module_name = (_get_module_name)dlsym(dlhandle, "get_module_name");
+	w_p->get_ABI_version = (_get_ABI_version)dlsym(dlhandle, "get_ABI_version");
 	w_p->client_new = (_client_new)dlsym(dlhandle, "client_new");
 	w_p->client_free = (_client_free)dlsym(dlhandle, "client_free");
 
 	/* if minimal functions are here, add the lib to available modules */
-	if(!w_p->ctor || !w_p->dtor || !w_p->getModuleName ||
-	   !w_p->getABIVersion || !w_p->client_new || !w_p->client_free) {
+	if(!w_p->ctor || !w_p->dtor || !w_p->get_module_name ||
+	   !w_p->get_ABI_version || !w_p->client_new || !w_p->client_free) {
 		DEBUG("not all symbols are present, check version numbers\n");
 		goto error;
 	}
 
 	/* check that the ABI version is no greater than the one from this lib */
-	if (w_p->getABIVersion() > 1) {
-		DEBUG("wrong ABI version (%i)\n", w_p->getABIVersion());
+	if (w_p->get_ABI_version() > 1) {
+		DEBUG("wrong ABI version (%i)\n", w_p->get_ABI_version());
 		goto error;
 	}
 
 	w_p->user = w_p->ctor();
 
-	DEBUG("WSM module '%s' got loaded successfully\n", w_p->getModuleName());
+	DEBUG("WSM module '%s' got loaded successfully\n", w_p->get_module_name());
 
 	return (wsm_t *)w_p;
 

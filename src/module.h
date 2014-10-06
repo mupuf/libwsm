@@ -37,10 +37,10 @@ typedef void *(*_ctor)(void);
 typedef void (*_dtor)(void *);
 
 /** Returns the name of the module */
-typedef const char* (*_getModuleName)(void);
+typedef const char* (*_get_module_name)(void);
 
 /** Version of libwsm's ABI used by the module */
-typedef unsigned int (*_getABIVersion)(void);
+typedef unsigned int (*_get_ABI_version)(void);
 
 /** Allocate a new client */
 typedef void * (*_client_new)(wsm_client_info_t info);
@@ -58,8 +58,8 @@ struct wsm_priv_t
 
 	_ctor ctor;
 	_dtor dtor;
-	_getModuleName getModuleName;
-	_getABIVersion getABIVersion;
+	_get_module_name get_module_name;
+	_get_ABI_version get_ABI_version;
 
 	_client_new client_new;
 	_client_free client_free;
