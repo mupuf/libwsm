@@ -76,6 +76,7 @@ struct wsm_client_priv_t
 };
 
 struct wsm_priv_t *wsm_priv(wsm_t *wsm);
+char *wsm_get_path_from_pid(const pid_t pid);
 wsm_t *wsm_load_module(void);
 void wsm_unload_module(wsm_t *wsm);
 

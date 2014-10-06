@@ -27,6 +27,8 @@ THE SOFTWARE.
 #include <dlfcn.h>
 #include <stdio.h>
 #include <errno.h>
+#include <limits.h>
+#include <unistd.h>
 
 #include "module.h"
 #include "debug.h"
@@ -90,6 +92,64 @@ error:
 	free(w_p);
 	return NULL;
 
+}
+
+char *wsm_get_path_from_pid(const pid_t pid)
+{
+	char				 *link_file		= NULL;
+	char				 *link_target	= NULL;
+	ssize_t			 	  read_len		= INT_MAX;
+	size_t				  link_len		= 1;
+
+	errno = 0;
+	link_file = malloc(sizeof(char)*20);
+	snprintf(link_file, 20, "/proc/%d/exe", pid);
+
+	if (link_file == NULL)
+	{
+		perror("wsm_get_path_from_pid: could not allocate memory for file path");
+		return NULL;
+	}
+	link_file[19] = '\0';
+
+	// It is impossible to obtain the size of /proc link targets as /proc is
+	// not POSIX compliant. Hence, we start from the NAME_MAX limit and increase
+	// it all the way up to readlink failing. readlink will fail upon reaching
+	// the PATH_MAX limit on Linux implementations. read_len will be strictly
+	// inferior to link_len as soon as the latter is big enough to contain the
+	// path to the executable and a trailing null character.
+	while (read_len >= link_len)
+	{
+		link_len += NAME_MAX;
+
+		free(link_target);
+		link_target = malloc(link_len * sizeof(char));
+
+		if (link_target == NULL)
+		{
+			perror("wsm_get_path_from_pid: could not allocate memory for link target");
+			free(link_file);
+			free(link_target);
+			return NULL;
+		}
+
+		errno = 0;
+		read_len= readlink(link_file, link_target, link_len);
+		if (read_len < 0)
+		{
+			perror("wsm_get_path_from_pid: could not read link");
+			free(link_file);
+			free(link_target);
+			return NULL;
+		}
+	}
+
+	free(link_file);
+
+	// readlink does not null-terminate the string
+	link_target[read_len] = '\0';
+
+	return link_target;
 }
 
 wsm_t *wsm_load_module(void)
