@@ -3,26 +3,47 @@
 #undef NDEBUG
 #include <assert.h>
 #include "unix_socket.h"
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 
 #define UNIX_SOCKET_PATH "./socket"
 
 int main(int argc, char **argv)
 {
-	int sfd, cfd;
+	int sfd, cfd, scfd;
+	wsm_client_info_t info;
 
-	/* Init a connection */
 	sfd = unix_socket_server_create(UNIX_SOCKET_PATH); assert(sfd > 0);
-	assert(unix_socket_client_connect(UNIX_SOCKET_PATH) > 0);
-	cfd = unix_socket_server_accept(sfd); assert(cfd > 0);
+	cfd = unix_socket_client_connect(UNIX_SOCKET_PATH); assert(cfd > 0);
+	scfd = unix_socket_server_accept(sfd); assert(cfd > 0);
 
 	wsm_t *wsm = wsm_init();
 	assert(wsm);
 
-	wsm_client_t *wsm_client = wsm_client_new(wsm, cfd);
+	wsm_client_t *wsm_client = wsm_client_new(wsm, scfd);
 	assert(wsm_client);
+
+	info = wsm_client_info_get(wsm_client);
+
+	assert(info.fd == scfd);
+	assert(info.pid == getpid());
+	assert(info.uid == getuid());
+	assert(info.gid == getgid());
+
+	if (argv[0][0] == '/') {
+		assert(info.fullpath);
+		assert(strcmp(info.fullpath, argv[0]) == 0);
+	} else
+		fprintf(stderr, "Impossible to run the 'fullpath' check. "
+				"Run the test with an absolute path.\n");
 
 	wsm_client_free(wsm_client);
 	wsm_fini(wsm);
+
+	close(scfd);
+	close(cfd);
+	close(sfd);
 
 	return 0;
 }

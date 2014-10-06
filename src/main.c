@@ -90,3 +90,9 @@ void wsm_client_free(wsm_client_t *wsm_client)
 	c_p->wsm_p->client_free(c_p->user);
 	free(c_p);
 }
+
+wsm_client_info_t wsm_client_info_get(wsm_client_t *wsm_client)
+{
+	struct wsm_client_priv_t *c_p = wsm_client_priv(wsm_client);
+	return c_p->info;
+}

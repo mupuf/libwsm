@@ -48,5 +48,7 @@ void wsm_fini(wsm_t *wsm);
 wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd);
 void wsm_client_free(wsm_client_t *wsm_client);
 
+wsm_client_info_t wsm_client_info_get(wsm_client_t *wsm_client);
+
 //
 #endif
