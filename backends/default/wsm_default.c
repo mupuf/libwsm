@@ -471,7 +471,7 @@ char *get_permission(void *generic_client, const char *capability, const char *o
 	if (!section)
 		section = weston_config_get_section_with_key(client->policy, WSM_DEFAULT_ALL_COMPOSITORS, capability);
 	if (!section)
-		return strdup(WSM_IMPLICIT_DENY); /* no compatible policy for this compositor */
+		return strdup(WSM_SOFT_DENY); /* no compatible policy for this compositor */
 	else {
 		char *value = NULL;
 		if (!weston_config_section_get_string(section, capability, &value, NULL)) {
@@ -491,5 +491,5 @@ char *get_permission(void *generic_client, const char *capability, const char *o
 		}
 	}
 
-	return strdup(WSM_IMPLICIT_DENY); /* no policy for this capability */
+	return strdup(WSM_SOFT_DENY); /* no policy for this capability */
 }
