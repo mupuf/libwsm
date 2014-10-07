@@ -109,6 +109,20 @@ int _string_starts_with(const char *str, const char *prefix)
 		return (strncmp(prefix, str, pre_len) == 0);
 }
 
+static int _string_ends_with(const char *str, const char *suffix)
+{
+	size_t suf_len = strlen(suffix);
+	size_t str_len = strlen(str);
+
+	if (suf_len > str_len)
+		return 0;
+	else
+	{
+		size_t delta = str_len - suf_len;
+		return (strncmp(suffix, str+delta, suf_len) == 0);
+	}
+}
+
 struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const char *path, const signed long uid, short * const existed)
 {
 	if (path == NULL)
@@ -213,7 +227,7 @@ static int _filter_uid(const struct dirent *dir)
 		return uid > 0;
 }
 
-static int _filter_all_files(const struct dirent *dir)
+static int _filter_ini_files(const struct dirent *dir)
 {
 	if (dir == NULL)
 		return 0;
@@ -221,7 +235,7 @@ static int _filter_all_files(const struct dirent *dir)
 	if (dir->d_type != DT_REG)
 		return 0;
 
-		return 1;
+	return _string_ends_with (dir->d_name, ".ini");
 }
 
 int scan_policy_folder(struct wsm_default_t *global, const char *path, const signed long uid)
@@ -235,7 +249,7 @@ int scan_policy_folder(struct wsm_default_t *global, const char *path, const sig
 	}
 
 	struct dirent **namelist = NULL;
-	int nb_files = scandir(path, &namelist, _filter_all_files, alphasort);
+	int nb_files = scandir(path, &namelist, _filter_ini_files, alphasort);
 
 	if (nb_files == -1 && errno != ENOENT) {
 		DEBUG("Default Backend: Error when scanning a policy directory");
