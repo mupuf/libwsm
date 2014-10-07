@@ -160,15 +160,15 @@ wsm_t *wsm_load_module(void)
 
 	/* TODO: load the module the user actually wants! */
 
-	backend_dir = opendir(DIRECTORY_PATH);
+	backend_dir = opendir(WSM_BACKEND_DIRECTORY);
 	if(backend_dir == NULL) {
 		DEBUG("Could not open the backend directory '"
-		      DIRECTORY_PATH"': %s.\n", strerror(errno));
+		      WSM_BACKEND_DIRECTORY"': %s.\n", strerror(errno));
 		return NULL;
 	}
 
 	while ((mydirent = readdir(backend_dir))!=NULL && wsm == NULL)
-		wsm = load_backend(DIRECTORY_PATH, mydirent->d_name);
+		wsm = load_backend(WSM_BACKEND_DIRECTORY, mydirent->d_name);
 	closedir(backend_dir);
 
 	return wsm;
