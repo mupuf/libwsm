@@ -32,6 +32,12 @@ THE SOFTWARE.
 
 #include <sys/types.h>
 
+#define WSM_ALLOW "allow"
+#define WSM_DENY "deny"
+#define WSM_IMPLICIT_DENY WSM_DENY
+#define WSM_EXPLICIT_DENY "explicit-deny"
+#define WSM_UNDECIDED "undecided"
+
 typedef struct wsm_t {} wsm_t;
 typedef struct wsm_client_t {} wsm_client_t;
 typedef struct wsm_client_info_t {
