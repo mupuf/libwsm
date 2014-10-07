@@ -40,7 +40,7 @@ struct wsm_priv_t *wsm_priv(wsm_t *wsm)
 	return (struct wsm_priv_t*) wsm;
 }
 
-static wsm_t *load_backend(const char *dir_path, const char *filename, const char *compositor_name)
+static wsm_t *_load_backend(const char *dir_path, const char *filename, const char *compositor_name)
 {
 	char path[PATH_MAX];
 	struct wsm_priv_t *w_p;
@@ -170,7 +170,7 @@ wsm_t *wsm_load_backend(void)
 	}
 
 	while ((mydirent = readdir(backend_dir))!=NULL && wsm == NULL)
-		wsm = load_backend(WSM_BACKEND_DIRECTORY, mydirent->d_name, "Weston");
+		wsm = _load_backend(WSM_BACKEND_DIRECTORY, mydirent->d_name, "Weston");
 	closedir(backend_dir);
 
 	return wsm;
