@@ -152,6 +152,29 @@ weston_config_get_section(struct weston_config *config, const char *section,
 }
 
 WL_EXPORT
+struct weston_config_section *
+weston_config_get_section_with_key(struct weston_config *config, const char *section,
+			  const char *key)
+{
+	struct weston_config_section *s;
+	struct weston_config_entry *e;
+
+	if (config == NULL)
+		return NULL;
+	wl_list_for_each(s, &config->section_list, link) {
+		if (strcmp(s->name, section) != 0)
+			continue;
+		if (key == NULL)
+			return s;
+		e = config_section_get_entry(s, key);
+		if (e)
+			return s;
+	}
+
+	return NULL;
+}
+
+WL_EXPORT
 int
 weston_config_section_get_int(struct weston_config_section *section,
 			      const char *key,

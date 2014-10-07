@@ -72,6 +72,9 @@ struct weston_config;
 struct weston_config_section *
 weston_config_get_section(struct weston_config *config, const char *section,
 			  const char *key, const char *value);
+struct weston_config_section *
+weston_config_get_section_with_key(struct weston_config *config,
+			  const char *section, const char *key);
 int
 weston_config_section_get_int(struct weston_config_section *section,
 			      const char *key,
