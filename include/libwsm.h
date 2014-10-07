@@ -44,7 +44,7 @@ typedef struct wsm_client_info_t {
 	pid_t pid;
 	uid_t uid;
 	gid_t gid;
-	const char *fullpath; /* TODO: Check for ABI problems */
+	char *fullpath; /* TODO: Check for ABI problems */
 } wsm_client_info_t;
 
 wsm_t *wsm_init();

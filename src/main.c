@@ -85,6 +85,8 @@ void wsm_client_free(wsm_client_t *wsm_client)
 	if (!wsm_client)
 		return;
 
+	if (c_p->info.fullpath)
+		free(c_p->info.fullpath);
 	c_p->wsm_p->client_free(c_p->user);
 	free(c_p);
 }
