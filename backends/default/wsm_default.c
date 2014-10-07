@@ -98,7 +98,7 @@ void wsm_app_policy_register(struct wsm_default_t *global, struct wsm_app_policy
 void wsm_app_policy_free(struct wsm_app_policy_t *policy);
 struct wsm_app_policy_t *wsm_app_policy_lookup(struct wsm_default_t *global, const char *exe_path, const signed long uid);
 
-int _string_starts_with(const char *str, const char *prefix)
+static int _string_starts_with(const char *str, const char *prefix)
 {
 	size_t pre_len = strlen(prefix);
 	size_t str_len = strlen(str);
@@ -147,6 +147,13 @@ struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const 
 
 	if (!exe_path) {
 		DEBUG("Default Backend: wsm_app_policy_new: Policy file '%s' is missing an executable path and will be discarded.\n", path);
+		weston_config_destroy(config);
+		return NULL;
+	}
+
+	if (!_string_starts_with(exe_path, "/") && strcmp(exe_path, WSM_DEFAULT_DEFAULT_PATH)) {
+		DEBUG("Default Backend: wsm_app_policy_new: Policy file '%s' 's executable path should be an absolute path or the wildcard '%s' (which matches all executables).\n", path, WSM_DEFAULT_DEFAULT_PATH);
+		free(exe_path);
 		weston_config_destroy(config);
 		return NULL;
 	}
