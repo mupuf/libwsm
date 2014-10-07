@@ -88,17 +88,17 @@ struct wsm_objperm_t {
 	struct wl_list	 link;
 };
 
-struct wsm_default_client_t *wsm_default_client_lookup (int socket);
-struct wsm_default_client_t *wsm_default_client_new (int socket);
-void wsm_default_client_delete (struct wsm_default_client_t *app);
-void wsm_default_client_change_permission (struct wsm_default_client_t *app, const char *cap_name, void *object, void *permission);
+struct wsm_default_client_t *wsm_default_client_lookup(int socket);
+struct wsm_default_client_t *wsm_default_client_new(int socket);
+void wsm_default_client_delete(struct wsm_default_client_t *app);
+void wsm_default_client_change_permission(struct wsm_default_client_t *app, const char *cap_name, void *object, void *permission);
 
-struct wsm_app_policy_t *wsm_app_policy_new (struct wsm_default_t *global, const char *path, const uid_t uid, short * const existed);
-void wsm_app_policy_register (struct wsm_default_t *global, struct wsm_app_policy_t *policy);
-void wsm_app_policy_free (struct wsm_app_policy_t *policy);
-struct wsm_app_policy_t *wsm_app_policy_lookup (struct wsm_default_t *global, const char *exe_path, const uid_t uid);
+struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const char *path, const uid_t uid, short * const existed);
+void wsm_app_policy_register(struct wsm_default_t *global, struct wsm_app_policy_t *policy);
+void wsm_app_policy_free(struct wsm_app_policy_t *policy);
+struct wsm_app_policy_t *wsm_app_policy_lookup(struct wsm_default_t *global, const char *exe_path, const uid_t uid);
 
-int _string_starts_with (const char *str, const char *prefix)
+int _string_starts_with(const char *str, const char *prefix)
 {
 	size_t pre_len = strlen(prefix);
 	size_t str_len = strlen(str);
@@ -106,10 +106,10 @@ int _string_starts_with (const char *str, const char *prefix)
 	if (pre_len > str_len)
 		return 0;
 	else
-		return (strncmp (prefix, str, pre_len) == 0);
+		return (strncmp(prefix, str, pre_len) == 0);
 }
 
-struct wsm_app_policy_t *wsm_app_policy_new (struct wsm_default_t *global, const char *path, const uid_t uid, short * const existed)
+struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const char *path, const uid_t uid, short * const existed)
 {
 	if (path == NULL)
 		return NULL;
@@ -124,50 +124,50 @@ struct wsm_app_policy_t *wsm_app_policy_new (struct wsm_default_t *global, const
 
 	config = weston_config_parse(path);
 	if (config != NULL) {
-		fprintf (stdout, "Using config file '%s'\n", weston_config_get_full_path(config));
+		DEBUG("Default Backend: wsm_app_policy_new: Using config file '%s'\n", weston_config_get_full_path(config));
 	} else {
-		fprintf(stderr, "wsm_app_policy_new: Could not parse policy file '%s'.\n", path);
+		DEBUG("Default Backend: wsm_app_policy_new: Could not parse policy file '%s'.\n", path);
 	}
 	section = weston_config_get_section(config, "Wayland Security Entry", NULL, NULL);
 	weston_config_section_get_string(section, "Exec", &exe_path, NULL);
 
 	if (!exe_path) {
-		fprintf (stderr, "wsm_app_policy_new: Policy file '%s' is missing an executable path and will be discarded.\n", path);
-		weston_config_destroy (config);
+		DEBUG("Default Backend: wsm_app_policy_new: Policy file '%s' is missing an executable path and will be discarded.\n", path);
+		weston_config_destroy(config);
 		return NULL;
 	}
 
 	struct wsm_app_policy_t *existing;
 
-	if ((existing = wsm_app_policy_lookup (global, exe_path, uid)) != NULL)
+	if ((existing = wsm_app_policy_lookup(global, exe_path, uid)) != NULL)
 	{
-		printf ("wsm_app_policy_new: Found an existing policy for '%s;%d'.\n", exe_path, uid);
+		DEBUG("Default Backend: wsm_app_policy_new: Found an existing policy for '%s;%d'.\n", exe_path, uid);
 		if (existed)
 			*existed=1;
 
-		weston_config_destroy (config);
-		free (exe_path);
+		weston_config_destroy(config);
+		free(exe_path);
 		return existing;
 	} else {
-		printf ("wsm_app_policy_new: Created a new policy for '%s;%d'.\n", exe_path, uid);
-		struct wsm_app_policy_t *policy = malloc(sizeof (struct wsm_app_policy_t));
+		DEBUG("Default Backend: wsm_app_policy_new: Created a new policy for '%s;%d'.\n", exe_path, uid);
+		struct wsm_app_policy_t *policy = malloc(sizeof(struct wsm_app_policy_t));
 		policy->version = (const unsigned int) 1;
 		policy->exe_path = exe_path;
 		policy->uid = (const uid_t) uid;
 		policy->config = config;
 
-		wsm_app_policy_register (global, policy);
+		wsm_app_policy_register(global, policy);
 
 		return policy;
 	}
 }
 
-void wsm_app_policy_register (struct wsm_default_t *global, struct wsm_app_policy_t *policy)
+void wsm_app_policy_register(struct wsm_default_t *global, struct wsm_app_policy_t *policy)
 {
 	wl_list_insert(&global->app_policies, &policy->link);
 }
 
-void wsm_app_policy_free (struct wsm_app_policy_t *policy)
+void wsm_app_policy_free(struct wsm_app_policy_t *policy)
 {
 	if (!policy)
 		return;
@@ -177,7 +177,7 @@ void wsm_app_policy_free (struct wsm_app_policy_t *policy)
 	free(policy);
 }
 
-struct wsm_app_policy_t *wsm_app_policy_lookup (struct wsm_default_t *global, const char *exe_path, const uid_t uid)
+struct wsm_app_policy_t *wsm_app_policy_lookup(struct wsm_default_t *global, const char *exe_path, const uid_t uid)
 {
 	struct wsm_app_policy_t *policy;
 
@@ -190,7 +190,7 @@ struct wsm_app_policy_t *wsm_app_policy_lookup (struct wsm_default_t *global, co
 	return NULL;
 }
 
-static int _filter_uid (const struct dirent *dir)
+static int _filter_uid(const struct dirent *dir)
 {
 	if (dir == NULL)
 		return 0;
@@ -202,16 +202,16 @@ static int _filter_uid (const struct dirent *dir)
 		return 0;
 
 	errno = 0;
-	long int uid = strtol (dir->d_name, 0, 10);
+	long int uid = strtol(dir->d_name, 0, 10);
 	if (errno)
 	{
-		perror ("Error when scanning for a user policy directory: folder name does not look like an UID.");
+		DEBUG("Default Backend: Error when scanning for a user policy directory: folder name does not look like an UID (%s).", strerror(errno));
 		return 0;
 	} else
 		return uid > 0;
 }
 
-static int _filter_all_files (const struct dirent *dir)
+static int _filter_all_files(const struct dirent *dir)
 {
 	if (dir == NULL)
 		return 0;
@@ -222,41 +222,43 @@ static int _filter_all_files (const struct dirent *dir)
 		return 1;
 }
 
-int scan_policy_folder (struct wsm_default_t *global, const char *path, const uid_t uid)
+int scan_policy_folder(struct wsm_default_t *global, const char *path, const uid_t uid)
 {
 	int created_files = 0;
 
-	if (uid)
-		printf ("Scanning directory '%s' for user '%d' policies...\n", path, uid);
-	else
-		printf ("Scanning directory '%s' for policies...\n", path);
+	if (uid) {
+		DEBUG("Default Backend: Scanning directory '%s' for user '%d' policies...\n", path, uid);
+	} else {
+		DEBUG("Default Backend: Scanning directory '%s' for policies...\n", path);
+	}
 
 	struct dirent **namelist = NULL;
-	int nb_files = scandir (path, &namelist, _filter_all_files, alphasort);
+	int nb_files = scandir(path, &namelist, _filter_all_files, alphasort);
 
-	if (nb_files == -1 && errno != ENOENT)
-		perror ("Error when scanning a policy directory");
-	else
-		printf ("%d %s found in '%s'.\n", nb_files, (nb_files!=1? "policies":"policy"), path);
+	if (nb_files == -1 && errno != ENOENT) {
+		DEBUG("Default Backend: Error when scanning a policy directory");
+	} else {
+		DEBUG("Default Backend: %d %s found in '%s'.\n", nb_files, (nb_files!=1? "policies":"policy"), path);
+	}
 
 	if (nb_files > 0) {
-		size_t pathlen = strlen (path);
+		size_t pathlen = strlen(path);
 
 		int i=0;
 		for(i=0; i<nb_files; ++i) {
 			struct dirent *ent = namelist[i];
-			char *ini_path = malloc (pathlen + strlen(ent->d_name) + 2);
-			sprintf (ini_path, "%s/%s", path, ent->d_name);
+			char *ini_path = malloc(pathlen + strlen(ent->d_name) + 2);
+			sprintf(ini_path, "%s/%s", path, ent->d_name);
 
 			short existed;
-			struct wsm_app_policy_t *policy = wsm_app_policy_new (global, ini_path, uid, &existed);
+			struct wsm_app_policy_t *policy = wsm_app_policy_new(global, ini_path, uid, &existed);
 			if (policy && !existed)
 				++created_files;
 
 			free(ini_path);
 			free(namelist[i]);
 		}
-		free (namelist);
+		free(namelist);
 	}
 
 	return created_files;
@@ -276,49 +278,48 @@ static int _init_policy_list(struct wsm_default_t *global)
 	if(!global)
 		return -1;
 
-	wl_list_init (&global->app_policies);
+	wl_list_init(&global->app_policies);
 	int total_policies = 0;
 
-	DEBUG ("Scanning user directories for per-user policies...\n");
+	DEBUG("Scanning user directories for per-user policies...\n");
 	struct dirent **namelist = NULL;
-	int nb_users = scandir (WSM_DEFAULT_POLICY_PER_USER_DIR, &namelist, _filter_uid, alphasort);
+	int nb_users = scandir(WSM_DEFAULT_POLICY_PER_USER_DIR, &namelist, _filter_uid, alphasort);
 	if (nb_users == -1 && errno != ENOENT) {
-		DEBUG ("An error occurred when scanning user directories in '%s'.\n", WSM_DEFAULT_POLICY_PER_USER_DIR);
+		DEBUG("An error occurred when scanning user directories in '%s'.\n", WSM_DEFAULT_POLICY_PER_USER_DIR);
 	} else
-		DEBUG ("%d %s found.\n", nb_users, (nb_users!=1? "user directories":"user directory"));
+		DEBUG("%d %s found.\n", nb_users, (nb_users!=1? "user directories":"user directory"));
 
 	if (nb_users > 0) {	
-		size_t pathlen = strlen (WSM_DEFAULT_POLICY_PER_USER_DIR);
+		size_t pathlen = strlen(WSM_DEFAULT_POLICY_PER_USER_DIR);
 		int i;
-		for (i=0; i<nb_users; ++i)
-		{
+		for (i=0; i<nb_users; ++i) {
 			struct dirent *ent = namelist[i];
-			char *folder_path = malloc (pathlen + strlen(ent->d_name) + 2);
-			sprintf (folder_path, "%s/%s", WSM_DEFAULT_POLICY_PER_USER_DIR, ent->d_name);
+			char *folder_path = malloc(pathlen + strlen(ent->d_name) + 2);
+			sprintf(folder_path, "%s/%s", WSM_DEFAULT_POLICY_PER_USER_DIR, ent->d_name);
 			long int uid = strtol(ent->d_name, 0, 10);
 		
-			int nb_policies = scan_policy_folder (global, folder_path, uid);
-			if (nb_policies < 0)
-				fprintf (stderr, "An error occurred when looking for policies in '%s'.\n", folder_path);
-			else
+			int nb_policies = scan_policy_folder(global, folder_path, uid);
+			if (nb_policies < 0) {
+				DEBUG("Default Backend: An error occurred when looking for policies in '%s'.\n", folder_path);
+			} else {
 				total_policies += nb_policies;
+			}
 
 			free(folder_path);
 			free(namelist[i]);
 		}
-		free (namelist);
+		free(namelist);
 	}
-	printf ("\n");
 
-	printf ("Scanning the default policy directory...\n");
-	int nb_policies = scan_policy_folder (global, WSM_DEFAULT_POLICY_DIR, 0);
-	if (nb_policies < 0)
-		fprintf (stderr, "An error occurred when looking for policies in '%s'.\n", WSM_DEFAULT_POLICY_DIR);
-	else
+	DEBUG("Default Backend: Scanning the default policy directory...\n");
+	int nb_policies = scan_policy_folder(global, WSM_DEFAULT_POLICY_DIR, 0);
+	if (nb_policies < 0) {
+		DEBUG("Default Backend: An error occurred when looking for policies in '%s'.\n", WSM_DEFAULT_POLICY_DIR);
+	} else {
 		total_policies += nb_policies;
-	printf ("\n");
+	}
 
-	printf ("%d %s were loaded in total.\n", total_policies, (total_policies!=1? "policies":"policy"));
+	DEBUG("Default Backend: %d %s were loaded in total.\n", total_policies, (total_policies!=1? "policies":"policy"));
 
 	return total_policies;
 }
@@ -328,7 +329,7 @@ void dtor(void *p_global)
 	struct wsm_default_t *global = p_global;
 
 	if(!global) {
-		DEBUG("WSM Default Backend: libwsm attempted to have me delete my internal data by passing a NULL pointer. This is a bug, please report it to the libwsm developers.\n");
+		DEBUG("Default Backend: dtor: libwsm attempted to have me delete my internal data by passing a NULL pointer. This is a bug, please report it to the libwsm developers.\n");
 		return;
 	}
 
@@ -344,7 +345,7 @@ void *ctor(const char *compositor_name)
 		return NULL;
 
 	if (!_init_policy_list(global)) {
-		DEBUG("WSM Default Backend: could not find any policy file, please check you installed them at the right location.\nI expected to find default policies at '%s' and per-user policies at '%s' (in folders named after users' UIDs).\n", WSM_DEFAULT_POLICY_DIR, WSM_DEFAULT_POLICY_PER_USER_DIR);
+		DEBUG("Default Backend: ctor: could not find any policy file, please check you installed them at the right location.\nI expected to find default policies at '%s' and per-user policies at '%s' (in folders named after users' UIDs).\n", WSM_DEFAULT_POLICY_DIR, WSM_DEFAULT_POLICY_PER_USER_DIR);
 		free(global);
 		return NULL;
 	}
@@ -371,7 +372,7 @@ unsigned int get_ABI_version()
 void *client_new(wsm_client_info_t info)
 {
 	if(!_wsm_default_global) {
-		DEBUG("WSM Default Backend: libwsm attempted to have me initialise a policy for a new client but I am not initialised or I have been deleted. This is a bug, please report it to the libwsm developers.\n");
+		DEBUG("Default Backend: client_new: libwsm attempted to have me initialise a policy for a new client but I am not initialised or I have been deleted. This is a bug, please report it to the libwsm developers.\n");
 		return NULL;
 	}
 
@@ -380,7 +381,7 @@ void *client_new(wsm_client_info_t info)
 	struct wsm_default_client_t *client = malloc(sizeof(struct wsm_default_client_t));
 
 	if (info.fullpath == NULL || info.uid < 0 || info.pid <= 0) {
-		DEBUG("Default backend: I was asked to create a new client with invalid information. This should be a bug in libwsm. Path:'%s'\tUID:%d\tPID:%d.\n", info.fullpath, info.uid, info.pid);
+		DEBUG("Default Backend: client_new: I was asked to create a new client with invalid information. This should be a bug in libwsm. Path:'%s'\tUID:%d\tPID:%d.\n", info.fullpath, info.uid, info.pid);
 		return NULL;
 	}
 
