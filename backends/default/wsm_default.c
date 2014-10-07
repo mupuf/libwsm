@@ -60,11 +60,7 @@ struct wsm_default_t {
 static struct wsm_default_t *_wsm_default_global = NULL;
 
 struct wsm_default_client_t{
-	/* Executable */
-	wsm_client_info_t		*parent;
-	char			 		*exe_path;
-	pid_t			 		 pid;
-	uid_t			 		 euid;
+	wsm_client_info_t		 info;
 	struct weston_config	*policy;
 };
 
@@ -431,15 +427,16 @@ void *client_new(wsm_client_info_t info)
 		return NULL;
 	}
 
-	client->exe_path = strndup(info.fullpath, PATH_MAX);
-	client->pid = info.pid;
-	client->euid = info.uid;
+	client->info = info;
 	client->policy = wsm_weston_config_copy(pol->config);
 
 	return (void *) client;
 }
 
-void client_free(void *client)
+void client_free(void *generic_client)
 {
-	free((struct wsm_default_client_t *)client);
+	struct wsm_default_client_t *client = (struct wsm_default_client_t *)generic_client;
+
+	weston_config_destroy(client->policy);
+	free(client);
 }
