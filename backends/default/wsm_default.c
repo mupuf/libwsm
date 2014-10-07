@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA	02110-1301	USA
 #define TMP_PREFIX					 	"../data/"
 #define WSM_DEFAULT_POLICY_DIR			TMP_PREFIX"security/wsm/default"
 #define WSM_DEFAULT_POLICY_PER_USER_DIR	TMP_PREFIX"security/wsm/per-user/default"
+#define WSM_DEFAULT_ALL_COMPOSITORS		"All Compositors"
 
 #define WSM_DEFAULT_DEFAULT_PATH		"*"
 #define WSM_DEFAULT_DEFAULT_UID			-1
@@ -439,4 +440,56 @@ void client_free(void *generic_client)
 
 	weston_config_destroy(client->policy);
 	free(client);
+}
+
+
+
+char *get_permission(void *generic_client, const char *capability, const char *object)
+{
+	if(!_wsm_default_global) {
+		DEBUG("Default Backend: get_permission: libwsm attempted to ask the default backend to make a security decision before initialising the backend. This is a bug, please report it to the libwsm developers.\n");
+		return NULL;
+	}
+
+	struct wsm_default_t			*global		= _wsm_default_global;
+	struct wsm_default_client_t		*client		= (struct wsm_default_client_t *)generic_client;
+	struct weston_config_section	*section	= NULL;
+
+	if (!client) {
+		DEBUG("Default Backend: Was asked to retrieve a permission for a non-existent client (capability was '%s' and object '%s').\n", capability, object);
+		return NULL;
+	}
+
+	if (!capability) {
+		DEBUG("Default Backend: Was asked to retrieve a permission but was not told for which capability (client was '%s:%d' and object '%s').\n", client->info.fullpath, client->info.pid, object);
+		return NULL;
+	}
+
+	/* object can legitimately be NULL for many capabilities */
+
+	section = weston_config_get_section_with_key(client->policy, global->compositor_name, capability);
+	if (!section)
+		section = weston_config_get_section_with_key(client->policy, WSM_DEFAULT_ALL_COMPOSITORS, capability);
+	if (!section)
+		return strdup(WSM_IMPLICIT_DENY); /* no compatible policy for this compositor */
+	else {
+		char *value = NULL;
+		if (!weston_config_section_get_string(section, capability, &value, NULL)) {
+			int is_array = 0; //FIXME implement support for array capabilities
+			//TODO parse to verify of it's an array.
+
+			if(is_array) {
+				//TODO find object-matching value
+				//TODO strdup matching value into a new variable
+				free(value);
+				//TODO clean up other things
+				//TODO return matching value variable as is
+			} else {
+				DEBUG("Default Backend: get_permission: Client '%s:%d' asked to perform '%s' on object '%s', and permission '%s' was read from the policy.\n", client->info.fullpath, client->info.pid, capability, object, value);
+				return value;
+			}
+		}
+	}
+
+	return strdup(WSM_IMPLICIT_DENY); /* no policy for this capability */
 }
