@@ -1,1 +1,66 @@
-TODO
+# Lib Wayland Security Modules
+
+LibWSM is a framework that supports security decision making on Wayland-based graphic stacks. It implements methods for expressing security decisions on privileged interfaces and an interface for security engineers to write backends. It is shipped with a default backend that allows per-user and per-application security policies. Those policies can be extended without limits to support per-compositor decisions and compositor-specific capabilities.
+
+This project was designed and developed by Martin Peres and Steve Dodier-Lazaro. It is maintained by Martin Peres.
+
+## Sources of policy
+When a policy is not set for a client;capability;object set, libWSM will implicitly deny actions. If policies are available, the default backend will take them into account in the following order from top to bottom:
+
+ - The policy that matches the client's executable and uid
+ - The system-wide policy that matches the client's executable
+ - The generic policy that matches the client's uid
+ - The system-wide generic policy for all clients
+ - Default Implicit Deny
+
+## Capabilities related to the Graphic Stack
+WSM_SCREENSHOT [allow/undecided/implicit-deny/explicit-deny] [default: implicit-deny]
+Ability to take a still screenshot of the whole screen
+
+WSM_SCREENSHARING [allow/undecided/implicit-deny/explicit-deny] [default: implicit-deny]
+Ability to record the screen continuously
+
+WSM_VIRTUAL_KEYBOARD [allow/inject-only/filter-only/undecided/implicit-deny/explicit-deny] [default: implicit-deny]
+Ability to inject or filter input on the keyboard
+
+WSM_VIRTUAL_POINTING [allow/undecided/implicit-deny/explicit-deny] [default: implicit-deny]
+Ability to modify the position of the pointer and simulate clicks
+
+WSM_GLOBAL_KEYBOARD_SEQUENCE [allow/undecided/implicit-deny/explicit-deny] [object: key sequence] [default: implicit-deny]
+Ability to receive global keyboard sequences when not on focus
+
+WSM_FORWARD_RESERVED_KEYBOARD_SEQUENCE [allow/undecided/implicit-deny/explicit-deny] [object: key sequence] [default: implicit-deny]
+Ability to receive reserved keyboard sequences instead of compositor when on focus
+
+WSM_FULLSCREEN [allow/undecided/implicit-deny/explicit-deny] [default: allow]
+Ability to use the entire screen
+
+WSM_CLIPBOARD_COPY [allow/undecided/implicit-deny/explicit-deny] [default: allow]
+Ability to copy to the clipboard
+
+WSM_CLIPBOARD_PASTE [allow/undecided/implicit-deny/explicit-deny] [default: implicit-deny]
+Ability to paste from the clipboard
+
+## Possible future capabilities
+DSM_RECORD_VIDEO [allow/undecided/implicit-deny/explicit-deny] [default: implicit-deny]
+Ability to read data on video capture devices
+
+DSM_RECORD_AUDIO [allow/undecided/implicit-deny/explicit-deny] [default: implicit-deny]
+Ability to read data on audio capture devices
+
+DSM_USE_PASSWORD_STORE [allow/undecided/implicit-deny/explicit-deny] [default: allow]
+Ability to use password store APIs
+
+DSM_PRIVILEGED_HEADLESS [allow/undecided/implicit-deny/explicit-deny] [default: undecided]
+Ability to perform privileged actions without having a GUI
+
+DSM_SESSION_LOCKER [allow/undecided/implicit-deny/explicit-deny] [default: explicit-deny]
+Ability to lock the user session
+
+DSM_AUTHENTICATION_UI [allow/undecided/implicit-deny/explicit-deny] [default: explicit-deny]
+Ability to act as an authentication UI
+
+DSM_PERMISSION_UI [allow/undecided/implicit-deny/explicit-deny] [default: explicit-deny]
+Ability to act as a permission UI
+
+
