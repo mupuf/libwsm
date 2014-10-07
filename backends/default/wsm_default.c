@@ -1,5 +1,5 @@
 /*
-Wayland Security Module
+Wayland Security Module - Default Backend
 Copyright (C) 2014 Martin Peres & Steve Dodier-Lazaro
 
 This library is free software; you can redistribute it and/or
@@ -358,7 +358,7 @@ void *ctor(const char *compositor_name)
 	return (void *)global;
 }
 
-const char* get_module_name()
+const char* get_backend_name()
 {
 	return "default";
 }
@@ -383,7 +383,7 @@ void *client_new(wsm_client_info_t info)
 	struct wsm_default_client_t *client = malloc(sizeof(struct wsm_default_client_t));
 
 	if (info.fullpath == NULL || info.uid < 0 || info.pid <= 0) {
-		DEBUG("Default module: I was asked to create a new client with invalid information. This should be a bug in libwsm. Path:'%s'\tUID:%d\tPID:%d.\n", info.fullpath, info.uid, info.pid);
+		DEBUG("Default backend: I was asked to create a new client with invalid information. This should be a bug in libwsm. Path:'%s'\tUID:%d\tPID:%d.\n", info.fullpath, info.uid, info.pid);
 		return NULL;
 	}
 
