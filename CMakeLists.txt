@@ -34,7 +34,7 @@ ADD_DEFINITIONS(-DWSM_BACKEND_DIRECTORY="${WSM_BACKEND_DIRECTORY}")
 
 # libWSM library
 IF(WSM_LIB)
-  ADD_LIBRARY(wsm SHARED "src/main.c" "src/module.c" "src/module.h" "include/libwsm.h")
+  ADD_LIBRARY(wsm SHARED "src/main.c" "src/backend.c" "src/backend.h" "include/libwsm.h")
   SET_PROPERTY(TARGET wsm PROPERTY VERSION 0.1.0)
   SET_PROPERTY(TARGET wsm PROPERTY SOVERSION 1)
   TARGET_LINK_LIBRARIES(wsm)

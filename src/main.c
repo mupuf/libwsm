@@ -25,7 +25,7 @@ THE SOFTWARE.
 #include <errno.h>
 
 #include <libwsm.h>
-#include "module.h"
+#include "backend.h"
 #include "debug.h"
 
 static struct wsm_client_priv_t *wsm_client_priv(wsm_client_t *wsm_client)
@@ -35,12 +35,12 @@ static struct wsm_client_priv_t *wsm_client_priv(wsm_client_t *wsm_client)
 
 wsm_t *wsm_init()
 {
-	return wsm_load_module();
+	return wsm_load_backend();
 }
 
 void wsm_fini(wsm_t *wsm)
 {
-	wsm_unload_module(wsm);
+	wsm_unload_backend(wsm);
 }
 
 wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd)
