@@ -377,9 +377,6 @@ void *client_new(wsm_client_info_t info)
 
 	struct wsm_default_t *global = _wsm_default_global;
 
-	fprintf (stderr, "UNABLE TO PROCEED: I NEED THE COMPOSITOR'S IDENTITY.\n");
-	return NULL;
-
 	struct wsm_default_client_t *client = malloc(sizeof(struct wsm_default_client_t));
 
 	if (info.fullpath == NULL || info.uid < 0 || info.pid <= 0) {
