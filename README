@@ -1,10 +1,12 @@
-# Lib Wayland Security Modules #
+Lib Wayland Security Modules
+============================
 
 LibWSM is a framework that supports security decision making on [Wayland](http://wayland.freedesktop.org/)-based graphic stacks. It implements methods for expressing security decisions on privileged interfaces and an interface for security engineers to write backends. It is shipped with a default backend that allows per-user and per-application security policies. Those policies can be extended without limits to support per-compositor decisions, compositor-specific capabilities and even custom security decisions.
 
 This project was designed and developed by [Martin Peres](http://www.mupuf.org/contact/mupuf.html) and [Steve Dodier-Lazaro](http://www.mupuf.org/contact/sidi.html). It is maintained by Martin Peres. The code is [hosted on GitHub](https://github.com/mupuf/libwsm/).
 
-## Sources of policy ##
+Sources of policy
+-----------------
 When a policy is not set for a client;capability;object set, libWSM will implicitly deny actions. If policies are available, the default backend will take them into account in the following order from top to bottom:
 
  - The policy that matches the client's executable and uid
@@ -22,7 +24,8 @@ Backends can give four recommendations by default:
 
 Other permissions can be defined. As a rule of thumb, when a compositor does not recognise a permission, *‘implicit deny’* should be followed.
 
-## Capabilities related to the Graphic Stack ##
+Capabilities related to the Graphic Stack
+-----------------------------------------
 The following capabilities are made available. `default:` indicates what the default policy shipped with the default backend states.
 
 **WSM_SCREENSHOT** `default: implicit-deny`
@@ -55,7 +58,8 @@ Ability to paste from the clipboard
 **WSM_RAISE_FOCUS** `default: explicit-allow`
 Ability to raise the window and grab focus programmatically
 
-## Possible future capabilities not related to the Graphic Stack ##
+Possible future capabilities not related to the Graphic Stack
+-------------------------------------------------------------
 **DSM_RECORD_VIDEO** `default: implicit-deny`
 Ability to read data on video capture devices
 
