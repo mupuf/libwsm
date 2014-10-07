@@ -33,6 +33,8 @@ THE SOFTWARE.
 #include "backend.h"
 #include "debug.h"
 
+#define CURRENT_ABI_NUMBER 1
+
 struct wsm_priv_t *wsm_priv(wsm_t *wsm)
 {
 	return (struct wsm_priv_t*) wsm;
@@ -71,13 +73,13 @@ static wsm_t *load_backend(const char *dir_path, const char *filename, const cha
 	/* if minimal functions are here, add the lib to available backends */
 	if(!w_p->ctor || !w_p->dtor || !w_p->get_backend_name ||
 	   !w_p->get_ABI_version || !w_p->client_new || !w_p->client_free) {
-		DEBUG("Not all symbols are present in backend '%s', check version numbers and report a bug against the backend if they match.\n", filename);
+		DEBUG("Not all symbols are present in backend '%s', check the backend's ABI number is '%i' and report a bug against the backend if they match.\n", CURRENT_ABI_NUMBER, filename);
 		goto error;
 	}
 
 	/* check that the ABI version is no greater than the one from this lib */
-	if (w_p->get_ABI_version() != 1) {
-		DEBUG("Wrong ABI version (%i) in backend '%s' (file '%s').\n", w_p->get_ABI_version(), w_p->get_backend_name(), filename);
+	if (w_p->get_ABI_version() != CURRENT_ABI_NUMBER) {
+		DEBUG("Wrong ABI version (%i instead of %i) in backend '%s' (file '%s').\n", w_p->get_ABI_version(), CURRENT_ABI_NUMBER, w_p->get_backend_name(), filename);
 		goto error;
 	}
 
