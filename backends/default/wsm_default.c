@@ -50,6 +50,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA	02110-1301	USA
 
 
 struct wsm_default_t {
+	/* Name of the current compositor */
+	char *compositor_name;
+
 	/* List of policies for each application and UID */
 	struct wl_list app_policies;
 };
@@ -320,20 +323,23 @@ static int _init_policy_list(struct wsm_default_t *global)
 	return total_policies;
 }
 
-void dtor(void *global)
+void dtor(void *p_global)
 {
+	struct wsm_default_t *global = p_global;
+
 	if(!global) {
 		DEBUG("WSM Default Backend: libwsm attempted to have me delete my internal data by passing a NULL pointer. This is a bug, please report it to the libwsm developers.\n");
 		return;
 	}
 
 	_free_policy_list(global);
+	free(global->compositor_name);
 	free(global);
 }
 
-void *ctor(void)
+void *ctor(const char *compositor_name)
 {
-	void *global = malloc(sizeof(struct wsm_default_t));
+	struct wsm_default_t *global = malloc(sizeof(struct wsm_default_t));
 	if(!global)
 		return NULL;
 
@@ -343,11 +349,13 @@ void *ctor(void)
 		return NULL;
 	}
 
+	global->compositor_name = strdup(compositor_name);
+
 	if(_wsm_default_global)
 		dtor(_wsm_default_global);
 	_wsm_default_global = global;
 
-	return global;
+	return (void *)global;
 }
 
 const char* get_module_name()
