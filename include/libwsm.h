@@ -56,5 +56,6 @@ void wsm_client_free(wsm_client_t *wsm_client);
 
 wsm_client_info_t wsm_client_info_get(wsm_client_t *wsm_client);
 
-//
+char *wsm_client_get_permission(wsm_client_t *wsm_client, const char *capability, const char *object);
+
 #endif

@@ -5,6 +5,7 @@
 #include "unix_socket.h"
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define UNIX_SOCKET_PATH "./socket"
@@ -37,6 +38,10 @@ int main(int argc, char **argv)
 	} else
 		fprintf(stderr, "Impossible to run the 'fullpath' check. "
 				"Run the test with an absolute path.\n");
+
+	char *permission = wsm_client_get_permission(wsm_client, "_WESTON_FULLSCREEN", NULL);
+	assert(permission);
+	free(permission);
 
 	wsm_client_free(wsm_client);
 	wsm_fini(wsm);

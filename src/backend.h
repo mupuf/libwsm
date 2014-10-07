@@ -48,6 +48,9 @@ typedef void * (*_client_new)(wsm_client_info_t info);
 /** Free a client */
 typedef void * (*_client_free)(void *user);
 
+/** Make a decision for a given client, capability and object */
+typedef char * (*_get_permission)(void *user, const char *capability, const char *object);
+
 struct wsm_priv_t
 {
 	wsm_t base;
@@ -63,6 +66,8 @@ struct wsm_priv_t
 
 	_client_new client_new;
 	_client_free client_free;
+
+	_get_permission get_permission;
 };
 
 struct wsm_client_priv_t

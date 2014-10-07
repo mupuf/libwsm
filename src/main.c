@@ -92,5 +92,20 @@ void wsm_client_free(wsm_client_t *wsm_client)
 wsm_client_info_t wsm_client_info_get(wsm_client_t *wsm_client)
 {
 	struct wsm_client_priv_t *c_p = wsm_client_priv(wsm_client);
+	struct wsm_client_info_t dummy = {0,};
+
+	if (!wsm_client)
+		return dummy;
+
 	return c_p->info;
+}
+
+char *wsm_client_get_permission(wsm_client_t *wsm_client, const char *capability, const char *object)
+{
+	struct wsm_client_priv_t *c_p = wsm_client_priv(wsm_client);
+
+	if (!wsm_client)
+		return NULL;
+
+	return c_p->wsm_p->get_permission(c_p->user, capability, object);
 }
