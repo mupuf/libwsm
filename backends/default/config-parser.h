@@ -99,6 +99,9 @@ weston_config_parse(const char *name);
 const char *
 weston_config_get_full_path(struct weston_config *config);
 
+struct weston_config *
+wsm_weston_config_copy(const struct weston_config *config);
+
 void
 weston_config_destroy(struct weston_config *config);
 

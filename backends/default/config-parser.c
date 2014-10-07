@@ -409,6 +409,39 @@ weston_config_next_section(struct weston_config *config,
 	return 1;
 }
 
+struct weston_config *
+wsm_weston_config_copy(const struct weston_config *config)
+{
+	if (config == NULL)
+		return NULL;
+
+	struct weston_config *copy = malloc(sizeof(struct weston_config));
+	if (copy == NULL)
+		return NULL;
+
+	wl_list_init(&copy->section_list);
+
+	struct weston_config_section *s, *next_s, *copy_s;
+	struct weston_config_entry *e, *next_e, *copy_e;
+
+	wl_list_for_each_safe(s, next_s, &config->section_list, link) {
+		copy_s = config_add_section(copy, s->name);
+		if (!copy_s) {
+			weston_config_destroy(copy);
+			return NULL;
+		}
+		wl_list_for_each_safe(e, next_e, &s->entry_list, link) {
+			copy_e = section_add_entry(copy_s, e->key, e->value);
+			if (!copy_e) {
+				weston_config_destroy(copy);
+				return NULL;
+			}
+		}
+	}
+
+	return copy;
+}
+
 void
 weston_config_destroy(struct weston_config *config)
 {
