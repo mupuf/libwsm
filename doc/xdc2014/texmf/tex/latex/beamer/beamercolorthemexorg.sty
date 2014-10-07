@@ -1,0 +1,200 @@
+% Copyright 2014 by Steve Dodier-Lazaro
+% UCL Department of Computer Science
+% s.dodier-lazaro@cs.ucl.ac.uk
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+\usepackage{boolexpr}
+
+\mode<presentation>
+
+\def\beamer@xorg@colour{nocolour}
+\DeclareOptionBeamer{colour}[true]{\def\beamer@xorg@colour{#1}}
+
+\ProcessOptionsBeamer
+
+% xorg palette as of May, 2013 - use light/mid/dark from the same group
+\definecolor{xorg-octopus-flesh}{RGB}{243, 225, 255} %L
+
+\definecolor{xorg-light-purple}{RGB}{198, 176, 188}  %L
+\definecolor{xorg-purple}{RGB}{80, 7, 120}           %M
+\definecolor{xorg-dark-purple}{RGB}{75, 56, 76}      %D
+
+\definecolor{xorg-blue-celeste}{RGB}{164, 219, 232}  %L
+%\definecolor{xorg-light-blue}{RGB}{141, 185, 202}   %L
+\definecolor{xorg-sky-blue}{RGB}{155, 184, 211}      %L
+\definecolor{xorg-bright-blue}{RGB}{0, 151, 169}     %M
+\definecolor{xorg-navy-blue}{RGB}{0, 40, 85}         %D
+\definecolor{xorg-dark-blue}{RGB}{0, 61, 75}         %D
+
+\definecolor{xorg-light-green}{RGB}{187, 197, 146}   %L
+\definecolor{xorg-mid-green}{RGB}{143, 153, 62}      %M
+\definecolor{xorg-bright-green}{RGB}{181, 189, 0}    %M
+\definecolor{xorg-dark-green}{RGB}{85, 80, 37}       %D
+
+\definecolor{xorg-stone}{RGB}{214, 210, 196}         %L
+\definecolor{xorg-dark-grey}{RGB}{140, 130, 121}     %M+D
+
+\definecolor{xorg-yellow}{RGB}{246, 190, 0}          %L
+\definecolor{xorg-orange}{RGB}{234, 118, 0}          %M
+\definecolor{xorg-brown}{RGB}{78, 54, 41}            %D
+
+\definecolor{xorg-mid-red}{RGB}{224, 60, 49}         %L
+\definecolor{xorg-rich-red}{RGB}{213, 0, 50}         %M
+\definecolor{xorg-pink}{RGB}{172, 20, 90}            %M
+\definecolor{xorg-burgundy}{RGB}{147, 39, 44}        %D
+\definecolor{xorg-dark-red}{RGB}{101, 29, 50}        %D
+
+
+\definecolor{xorg-ppt-purple}{RGB}{77, 41, 143}
+\definecolor{xorg-ppt-blue}{RGB}{5, 166, 188}
+\definecolor{xorg-ppt-orange}{RGB}{244, 111, 24}
+\definecolor{xorg-ppt-pink}{RGB}{179, 7, 86}
+\definecolor{xorg-ppt-green}{RGB}{110, 150, 27}
+\definecolor{xorg-ppt-warm-grey}{RGB}{121, 104, 98}
+
+
+% Main colours to be used in the theme (should be part of the xorg palette)
+\switch
+\case{\pdf@strcmp{\beamer@xorg@colour}{orange}}
+    \definecolor{xorg-palette-light}{named}{xorg-yellow}
+    \definecolor{xorg-palette-mid}{named}{xorg-orange}
+    \definecolor{xorg-palette-dark}{named}{xorg-brown}
+\case{\pdf@strcmp{\beamer@xorg@colour}{blue}}
+    \definecolor{xorg-palette-light}{named}{xorg-sky-blue}
+    \definecolor{xorg-palette-mid}{named}{xorg-bright-blue}
+    \definecolor{xorg-palette-dark}{named}{xorg-navy-blue}
+\case{\pdf@strcmp{\beamer@xorg@colour}{blue-alt}}
+    \definecolor{xorg-palette-light}{named}{xorg-bright-blue}
+    \definecolor{xorg-palette-mid}{named}{xorg-octopus-flesh}
+    \definecolor{xorg-palette-dark}{named}{xorg-dark-blue}
+\case{\pdf@strcmp{\beamer@xorg@colour}{green}}
+    \definecolor{xorg-palette-light}{named}{xorg-light-green}
+    \definecolor{xorg-palette-mid}{named}{xorg-bright-green}
+    \definecolor{xorg-palette-dark}{named}{xorg-dark-green}
+\case{\pdf@strcmp{\beamer@xorg@colour}{green-alt}}
+    \definecolor{xorg-palette-light}{named}{xorg-light-green}
+    \definecolor{xorg-palette-mid}{named}{xorg-mid-green}
+    \definecolor{xorg-palette-dark}{named}{xorg-dark-green}
+\case{\pdf@strcmp{\beamer@xorg@colour}{red}}
+    \definecolor{xorg-palette-light}{named}{xorg-mid-red}
+    \definecolor{xorg-palette-mid}{named}{xorg-rich-red}
+    \definecolor{xorg-palette-dark}{named}{xorg-burgundy}
+\case{\pdf@strcmp{\beamer@xorg@colour}{pink}}
+    \definecolor{xorg-palette-light}{named}{xorg-mid-red}
+    \definecolor{xorg-palette-mid}{named}{xorg-pink}
+    \definecolor{xorg-palette-dark}{named}{xorg-dark-red}
+\case{\pdf@strcmp{\beamer@xorg@colour}{purple}}
+    \definecolor{xorg-palette-light}{named}{xorg-light-purple}
+    \definecolor{xorg-palette-mid}{named}{xorg-purple}
+    \definecolor{xorg-palette-dark}{named}{xorg-dark-purple}
+\case{\pdf@strcmp{\beamer@xorg@colour}{purple-alt}}
+    \definecolor{xorg-palette-light}{named}{xorg-light-purple}
+    \definecolor{xorg-palette-mid}{named}{xorg-light-purple}
+    \definecolor{xorg-palette-dark}{named}{xorg-dark-purple}
+\case{\pdf@strcmp{\beamer@xorg@colour}{grey}}
+    \definecolor{xorg-palette-light}{named}{xorg-stone}
+    \definecolor{xorg-palette-mid}{named}{xorg-dark-grey}
+    \definecolor{xorg-palette-dark}{named}{black}
+\case{\pdf@strcmp{\beamer@xorg@colour}{ppt-purple}}
+    \definecolor{xorg-palette-light}{named}{xorg-light-purple}
+    \definecolor{xorg-palette-mid}{named}{xorg-ppt-purple}
+    \definecolor{xorg-palette-dark}{named}{xorg-ppt-purple}
+\case{\pdf@strcmp{\beamer@xorg@colour}{ppt-blue}}
+    \definecolor{xorg-palette-light}{named}{xorg-light-blue}
+    \definecolor{xorg-palette-mid}{named}{xorg-ppt-blue}
+    \definecolor{xorg-palette-dark}{named}{xorg-ppt-blue}
+\case{\pdf@strcmp{\beamer@xorg@colour}{ppt-orange}}
+    \definecolor{xorg-palette-light}{named}{xorg-yellow}
+    \definecolor{xorg-palette-mid}{named}{xorg-ppt-orange}
+    \definecolor{xorg-palette-dark}{named}{xorg-ppt-orange}
+\case{\pdf@strcmp{\beamer@xorg@colour}{ppt-pink}}
+    \definecolor{xorg-palette-light}{named}{xorg-mid-red}
+    \definecolor{xorg-palette-mid}{named}{xorg-ppt-pink}
+    \definecolor{xorg-palette-dark}{named}{xorg-ppt-pink}
+\case{\pdf@strcmp{\beamer@xorg@colour}{ppt-green}}
+    \definecolor{xorg-palette-light}{named}{xorg-light-green}
+    \definecolor{xorg-palette-mid}{named}{xorg-ppt-green}
+    \definecolor{xorg-palette-dark}{named}{xorg-ppt-green}
+\case{\pdf@strcmp{\beamer@xorg@colour}{ppt-warm-grey}}
+    \definecolor{xorg-palette-light}{named}{xorg-stone}
+    \definecolor{xorg-palette-mid}{named}{xorg-ppt-warm-grey}
+    \definecolor{xorg-palette-dark}{named}{black}
+\otherwise
+    \definecolor{xorg-palette-light}{named}{xorg-sky-blue}
+    \definecolor{xorg-palette-mid}{named}{xorg-bright-blue}
+    \definecolor{xorg-palette-dark}{named}{xorg-navy-blue}
+\endswitch
+
+
+
+% Title page colours (black and white to go with the main colour)
+\definecolor{xorg-title-main}{RGB}{0, 0, 0}
+\definecolor{xorg-title-subtitle}{RGB}{255, 255, 255}
+\definecolor{xorg-title-bg}{named}{xorg-palette-mid}
+\definecolor{xorg-title-banner-bg}{RGB}{255, 255, 255}
+\definecolor{xorg-title-banner-fg}{RGB}{0, 0, 0}
+
+% Normal slides are displayed black on white
+\definecolor{xorg-slide-bg}{RGB}{255, 255, 255}
+\definecolor{xorg-slide-fg}{RGB}{0, 0, 0}
+\definecolor{xorg-slide-shaded}{RGB}{121, 104, 98} % xorg warmgrey
+\definecolor{xorg-slide-banner-bg1}{RGB}{0, 0, 0}
+\definecolor{xorg-slide-banner-bg2}{named}{xorg-palette-mid}
+\definecolor{xorg-slide-banner-fg}{named}{xorg-slide-bg}
+
+
+% This sets the colour of the frame titles to something standard 
+\setbeamercolor{frametitle}{fg = xorg-palette-dark, bg = xorg-slide-bg}
+\setbeamercolor{framesubtitle}{fg = xorg-palette-dark, bg = xorg-slide-bg}
+
+% Headlines used in vertical theme
+\setbeamercolor{upper separation line head}{bg = xorg-slide-banner-bg1}
+\setbeamercolor{middle separation line head}{bg = xorg-palette-light}
+\setbeamercolor{lower separation line head}{bg = xorg-title-banner-bg}
+
+% In case you choose to display the Table of Contents, or the Outline slide.
+\setbeamercolor{section in toc}{fg = xorg-slide-fg}
+\setbeamercolor{section in toc shaded}{fg = xorg-slide-shaded} 
+
+% The colour of all the items, subitems and and subsubitems are set to black.
+\setbeamercolor{item}{fg = xorg-palette-light}
+\setbeamercolor{subitem}{fg = xorg-palette-light}
+\setbeamercolor{subsubitem}{fg = xorg-palette-light}
+
+% This sets the color for each item heading of the description environment.
+\setbeamercolor{description item}{fg = xorg-palette-dark}
+
+% NOTE: Setting the color black for all the items also sets in black for other environemnts like enumerate.
+
+% We also need to fix the colours for captions for figures and tables.
+\setbeamercolor{caption}{fg = xorg-slide-fg}
+\setbeamercolor{caption name}{fg = xorg-slide-fg}
+
+% In addition, we can also change the background colour of the slides depending on pur requirement.
+\setbeamercolor{background canvas}{bg = xorg-slide-bg,fg = xorg-slide-fg}
+
+% Normal blocks
+\setbeamercolor{block title}{fg = xorg-palette-dark, bg = xorg-slide-bg}
+\setbeamercolor{block body}{bg = xorg-slide-bg}
+
+% Alert block
+\setbeamercolor{block title alerted}{bg = xorg-palette-dark, fg = xorg-title-main}
+\setbeamercolor{block body alerted}{bg = xorg-palette-light, fg = xorg-slide-fg}
+
+% Example block
+\setbeamercolor{block title example}{fg = xorg-palette-dark, bg = xorg-slide-bg}
+\setbeamercolor{block body example}{fg = xorg-slide-fg, bg = xorg-slide-bg}
+
+% Table of contents
+\setbeamercolor{section in toc shaded}{fg = xorg-slide-fg}
+\setbeamercolor{section in toc}{fg = xorg-palette-dark}
+\setbeamercolor{subsection in toc shaded}{fg = xorg-slide-fg}
+\setbeamercolor{subsection in toc}{fg = xorg-palette-dark}
+
+\usecolortheme[named=xorg-palette-dark]{structure}
+
+\mode
+<all>

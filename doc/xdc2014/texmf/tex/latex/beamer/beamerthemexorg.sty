@@ -1,0 +1,95 @@
+% Copyright 2014 by Steve Dodier-Lazaro
+% UCL Department of Computer Science
+% s.dodier-lazaro@cs.ucl.ac.uk
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+
+% TODO: turn department and group into commands Keep rest as options.
+% Options of the xorg theme:
+% - colour:
+% Colours available from the official palette:
+% purple, purple-alt, blue, blue-alt, red, pink, orange, green, green-alt, grey
+% Similar colours used in some xorg presentation templates:
+% ppt-purple, ppt-blue, ppt-orange, ppt-pink, ppt-green, ppt-warm-grey
+%
+% - department:
+% If set, will display the department's name on the header of the title page
+% and on the sidebar of each slide. If unset, the general motto of xorg will
+% be used instead
+%
+% - group:
+% If set, will display the group's name instead of the department's name
+%
+% - sansserifonly:
+% If set, sans serif fonts will be used for the title
+%
+% - nomotto: TODO
+% If set, bypasses the group and department options and removes the motto from
+% the sidebar (but not from the header)
+%
+% - titlepagestyle: TODO
+% If set to whitebg, ...
+% If unset, will use the palette colour as a background, and both white and
+% black colours for text in the titlepage
+%
+% - titlepageimage: TODO
+% If set, the provided path will be used as a title page wallpaper, in full
+% screen. The top may be partly pruned because of the xorg header
+
+\mode<presentation>
+
+\def\beamer@xorg@sansserifonly{false}
+
+\newcommand{\office}[1]{\gdef\@office{#1}}%
+\newcommand{\@office}{false}
+\newcommand{\insertoffice}{\@office}
+
+\newcommand{\address}[1]{\gdef\@address{#1}}%
+\newcommand{\@address}{false}
+\newcommand{\insertaddress}{\@address}
+
+\newcommand{\email}[1]{\gdef\@email{#1}}%
+\newcommand{\@email}{false}
+\newcommand{\insertemail}{\@email}
+
+\newcommand{\phone}[1]{\gdef\@phone{#1}}%
+\newcommand{\@phone}{false}
+\newcommand{\insertphone}{\@phone}
+
+\newcommand{\department}[1]{\gdef\@department{#1}}%
+\newcommand{\@department}{London's Global University}
+\newcommand{\insertdepartment}{\@department}
+
+\newcommand{\group}[1]{\gdef\@group{#1}}%
+\newcommand{\@group}{false}
+\newcommand{\insertgroup}{\@group}
+
+\newcommand{\website}[1]{\gdef\@website{#1}}%
+\newcommand{\@website}{false}
+\newcommand{\insertwebsite}{\@website}
+
+
+\PassOptionsToPackage{titlepageimage=(null)}{beamerinnerthemexorgtitlepage}
+
+\DeclareOptionBeamer{colour}{\PassOptionsToPackage{colour=#1}{beamercolorthemexorg}}
+\DeclareOptionBeamer{sansserifonly}{\PassOptionsToPackage{sansserifonly=#1}{beamerinnerthemexorgtitlepage}}
+\DeclareOptionBeamer{titlepageimage}{\PassOptionsToPackage{titlepageimage=#1}{beamerinnerthemexorgtitlepage}}
+
+\ProcessOptionsBeamer
+
+\usepackage{helvet}
+\usepackage{mathptmx}
+\renewcommand*{\familydefault}{\sfdefault}
+\usepackage[T1]{fontenc}
+
+\usecolortheme{xorg}
+%\useinnertheme{xorg-rectangles}
+\useoutertheme{xorg}
+\useinnertheme{xorg}
+\useinnertheme{xorgtitlepage}
+
+\mode
+<all>

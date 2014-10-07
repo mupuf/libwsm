@@ -1,0 +1,123 @@
+% Copyright 2014 by Steve Dodier-Lazaro
+% UCL Department of Computer Science
+% s.dodier-lazaro@cs.ucl.ac.uk
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+\usepackage{setspace}
+\PassOptionsToPackage{unicode}{hyperref}
+
+\mode<presentation>
+
+\DeclareOptionBeamer{sansserifonly}[true]{\def\beamer@xorg@sansserifonly{#1}}
+\DeclareOptionBeamer{titlepageimage}[(null)]{\def\beamer@xorg@titlepageimage{#1}}
+
+\ProcessOptionsBeamer
+
+
+
+\let\mktitle\maketitle
+\renewcommand{\maketitle}{{
+
+    \ifnum\pdf@strcmp{\beamer@xorg@sansserifonly}{false}=\z@
+        \setbeamerfont{title}{family=\rmfamily, size=\huge}
+        \setbeamerfont{subtitle}{family=\rmfamily, size=\Large}
+    \else
+        \setbeamerfont{title}{family=\sffamily, size=\huge}
+        \setbeamerfont{subtitle}{family=\sffamily, size=\Large}
+    \fi
+  
+    \setbeamercolor{title}{fg = xorg-title-main, bg = xorg-title-bg}
+    \setbeamercolor{subtitle}{fg = xorg-title-subtitle, bg = xorg-title-bg}  
+
+    \setbeamerfont{headline}{family=\sffamily, size=\tiny}
+    \setbeamercolor{headline}{fg = xorg-title-main}
+    
+    \setbeamercolor{background canvas}{fg = xorg-title-main, bg = xorg-title-bg}
+    
+    \ifnum\pdf@strcmp{\beamer@xorg@titlepageimage}{(null)}=\z@
+    \else
+      \usebackgroundtemplate{\includegraphics[width=\paperwidth]{\beamer@xorg@titlepageimage}}
+    \fi
+    \begin{frame}[plain,t]
+        \titlepage
+    \end{frame}
+}}
+
+
+\defbeamertemplate*{title page}{xorg}[1][left]
+{
+    \vspace{-3px} %ugly hardcoded hack to remove unwanted vertical spacing
+    \begin{beamercolorbox}[wd=\paperwidth]{headline}
+        \hskip-\beamer@leftsidebar
+        \begin{overpic}[width=\paperwidth]%
+            {banner-xorg.pdf}
+            \ifnum\pdf@strcmp{\@group}{false}=\z@
+                \put(39,0.6){\color{xorg-slide-banner-bg1}{\MakeUppercase{\scriptsize\bfseries\@department}}}
+            \else
+                \put(3,11.5){\usebeamerfont{headline}{\MakeUppercase{\bfseries\@group}}}
+                \put(3,9.5){\usebeamerfont{headline}{\fontsize{4.5}{8}\selectfont\MakeUppercase{\@department}}}
+            \fi
+        \end{overpic}
+    \end{beamercolorbox}
+    \pgfsetfillopacity{0.7}
+    %\hspace*{-\beamer@leftmargin}\begin{beamercolorbox}[sep=0pt,wd=.95\paperwidth]{title}
+\begin{center}
+    \vspace{1.5em}
+    \pgfsetfillopacity{1}
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}%
+    \vskip0.46em
+    {\usebeamerfont{subtitle}\usebeamercolor[fg]{title}{\insertsubtitle}\par}
+\end{center}
+    \vfill
+	\vskip2.5em
+    %\hspace*{-\beamer@leftmargin}\makebox[\linewidth][c]{%
+    \makebox[\linewidth][c]{%
+    \begin{columns}
+        \begin{column}{0.3\paperwidth}
+          \pgfsetfillopacity{0.7}%
+          \begin{beamercolorbox}[sep=5pt]{title}%
+          \pgfsetfillopacity{1}%
+            \color{xorg-title-main}%
+            \vskip0.1em%
+            \scriptsize%
+              \usebeamerfont{author}\color{xorg-title-main}\hspace{0.1em}\insertauthor
+            
+			\vskip0.6em
+            \color{xorg-title-main}\tiny\ifnum\pdf@strcmp{\@address}{false}=\z@\else\@address\fi
+            \vskip0.2em
+            \vskip2em%
+          \end{beamercolorbox}
+        \end{column}
+        \begin{column}{0.3\paperwidth}
+                  \begin{beamercolorbox}[sep=5pt]{title}%
+          \pgfsetfillopacity{1}%
+            \color{xorg-title-main}%
+            \vskip0.1em%
+            \scriptsize%
+              \usebeamerfont{author}\color{xorg-title-main}\hspace{5.7em}\insertinstitute
+            
+			\vskip0.6em
+            \color{xorg-title-main}\tiny\ifnum\pdf@strcmp{\@email}{false}=\z@\else\hspace{7em}\@email\fi
+            \vskip0.2em
+            \vskip2em%
+          \end{beamercolorbox}
+        \end{column}
+    \end{columns}
+    }
+\begin{center}
+\vskip0.5em
+    \includegraphics[height=0.6cm,keepaspectratio]{logo-ucl.png}\hspace{1em}%
+    \includegraphics[height=0.6cm,keepaspectratio]{logo-mupuf.png}\hspace{1em}%
+    \includegraphics[height=0.6cm,keepaspectratio]{logo-labri.png}%
+\end{center}
+    \vfill
+}
+
+
+
+\mode
+<all>
+

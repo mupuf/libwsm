@@ -1,0 +1,41 @@
+% Copyright 2014 by Steve Dodier-Lazaro
+% UCL Department of Computer Science
+% s.dodier-lazaro@cs.ucl.ac.uk
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+
+
+\mode<presentation>
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+
+
+\setbeamersize{text margin left=1em,text margin right=1em}
+
+\defbeamertemplate*{frametitle}{xorg}[1][left]
+{
+  \vbox{}\vskip-\beamer@leftmargin
+  \begin{beamercolorbox}[sep=0.2\beamer@leftmargin,#1,wd=\textwidth]{frametitle}
+    {\strut\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle\strut\par}
+    \vskip-0.6\baselineskip
+    {\color{xorg-palette-dark} \rule{\textwidth}{0.1ex}}\par
+    \vskip-0.1\baselineskip
+    {
+      \ifx\insertframesubtitle\@empty
+      \else
+      {\strut\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+      \fi
+    }
+    \end{beamercolorbox}
+}
+
+% Frame title continuations, default
+\defbeamertemplate*{frametitle continuation}{xorg}{(\insertcontinuationcount)}
+
+
+\mode
+<all>

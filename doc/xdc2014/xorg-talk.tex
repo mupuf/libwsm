@@ -1,0 +1,90 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Soutenance de projet - Fichier modèle pour présentations Beamer
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{beamer}
+\usepackage[utf8x]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage{lmodern}
+
+\usepackage{multicol}
+\usepackage{wrapfig}
+\usepackage{ulem}
+\usetheme[colour=blue-alt,sansserifonly=true]{xorg}
+
+\usepackage{tikz}
+\newcommand*\circled[1]{{\usebeamercolor{item}\tikz[baseline=(char.base)]{
+    \node[shape=circle,draw,inner sep=0.5pt,color=fg,fill=fg,text=bg] (char) {\scriptsize{#1}};}}}
+
+%%% FIN DU SECOND THÈME
+
+%%% TITRE DE PAGE
+\title{Security in Wayland-Based DEs}
+\subtitle{Privileged Clients, LibWSM and Security UIs}
+\author{Steve~Dodier-Lazaro}
+\institute{Martin Peres}
+\department{X.Org Developer Conference 2014}
+\date{~}
+\address{s.dodier-lazaro@cs.ucl.ac.uk}
+\email{martin.peres@labri.fr}
+
+\newcommand{\myemph}[1]{\textbf{#1}}
+
+\usepackage{savesym}
+\savesymbol{ifboolexpr}
+\usepackage{xcolor,mdframed}
+\restoresymbol{XCOLOR}{ifboolexpr}
+
+\newenvironment{important}[1][]{%
+   \begin{mdframed}[%
+      backgroundcolor={xorg-mid-red!15}, hidealllines=true,
+      skipabove=0.7\baselineskip, skipbelow=0.7\baselineskip,
+      splitbottomskip=2pt, splittopskip=4pt, #1]%
+   \makebox[0pt]{% ignore the withd of !
+      \smash{% ignor the height of !
+         \fontsize{32pt}{32pt}\selectfont% make the ! bigger
+         \hspace*{-19pt}% move ! to the left
+         \raisebox{-2pt}{% move ! up a little
+            {\color{xorg-rich-red}\sffamily\bfseries !}% type the bold red !
+         }%
+      }%
+   }%
+}{\end{mdframed}}
+
+\newenvironment{goodnews}[1][]{%
+   \begin{mdframed}[%
+      backgroundcolor={xorg-bright-green!15}, hidealllines=true,
+      skipabove=0.7\baselineskip, skipbelow=0.7\baselineskip,
+      splitbottomskip=2pt, splittopskip=4pt, #1]%
+   \makebox[0pt]{% ignore the withd of !
+      \smash{% ignor the height of !
+         \fontsize{25pt}{25pt}\selectfont% make the ! bigger
+         \hspace*{-19pt}% move ! to the left
+         \raisebox{-2pt}{% move ! up a little
+            {\color{xorg-bright-green}\sffamily\bfseries :)}% type the bold red !
+         }%
+      }%
+   }%
+}{\end{mdframed}}
+
+
+\begin{document}
+
+\maketitle
+
+\AtBeginSection[]
+{
+   \begin{frame}<beamer>
+   \frametitle{Outline}
+   \tableofcontents[currentsection]
+   \end{frame}
+}
+
+\include{contents}
+
+\bibliographystyle{apalike}
+\bibliography{Library}
+
+\end{document}

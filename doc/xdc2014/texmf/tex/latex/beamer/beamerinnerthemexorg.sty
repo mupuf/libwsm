@@ -1,0 +1,83 @@
+% Copyright 2014 by Steve Dodier-Lazaro
+% UCL Department of Computer Science
+% s.dodier-lazaro@cs.ucl.ac.uk
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+\usepackage{overpic}
+
+
+\mode<presentation>
+
+\makeatletter
+
+%\newlength\sidebarouterwidth
+%\setlength\sidebarouterwidth{0.066666667\paperwidth}
+%\newlength\sidebarinnerwidth
+%\setlength\sidebarinnerwidth{0.05\paperwidth}
+\newlength\sidebarouterheight
+\setlength\sidebarouterheight{0.066666667\paperheight}
+\newlength\sidebarinnerheight
+\setlength\sidebarinnerheight{0.05\paperheight}
+
+%\setbeamersize{sidebar width left=\sidebarouterwidth}
+
+%\setbeamertemplate{sidebar canvas left}{
+%    \setlength{\unitlength}{\paperheight}
+%    \begin{picture}(1,1)
+%        \put(0,0){{\color{xorg-slide-banner-bg2}\rule{\sidebarouterwidth}{\paperheight}}}
+%        \put(0,0){{\color{xorg-slide-banner-bg1}\rule{\sidebarinnerwidth}{0.5\paperheight}}}
+%    \end{picture}
+%}
+
+%\setbeamertemplate{sidebar left}{
+%    \begin{overpic}[width=\sidebarinnerwidth,height=\paperheight]%
+%        {banner-vertical.pdf}
+%        \ifnum\pdf@strcmp{\@group}{false}=\z@
+%            \put(1.2,2){\color{xorg-slide-banner-fg}\rotatebox{90}{\makebox(1,2)[lb]{\smash{\MakeUppercase{\tiny\bfseries\@department}}}}}
+%        \else
+%            \put(1.2,2){\color{xorg-slide-banner-fg}\rotatebox{90}{\makebox(1,2)[lb]{\smash{\MakeUppercase{\tiny\bfseries\@group}}}}}
+%        \fi
+%    \end{overpic}
+%}
+
+\setbeamertemplate{headline}{
+\begin{beamercolorbox}[colsep=0ex, sep=0ex, colsep*=0ex, ht=2.5em, wd=\textwidth]{lower separation line head}
+{
+\vbox to2.5em{%
+\leavevmode%
+\@tempdima=\textwidth%
+\advance\@tempdima by -20em%
+\begin{beamercolorbox}[colsep=0ex, sep=0ex, colsep*=0ex, wd=30em, ht=2em]{lower separation line head}
+\includegraphics[height=2em,keepaspectratio]{banner-horizontal-xorg.pdf}
+\end{beamercolorbox}%
+}%
+}%
+\end{beamercolorbox}
+}
+
+\setbeamertemplate{footline}{%
+\hbox{%
+\begin{beamercolorbox}[wd=.70\paperwidth,ht=3.25ex,left,leftskip=2ex]{title in head/foot}%
+   % \vbox to3.25ex{\vfil\hbox{\usebeamerfont{title in head/foot}\insertshorttitle{}}\vfil}%
+\end{beamercolorbox}%
+\begin{beamercolorbox}[wd=0.20\paperwidth,ht=3.25ex,center]{date in head/foot}%
+   % \vbox to3.25ex{\vfil\hbox{\usebeamerfont{date in head/foot}\insertshortdate{}}\vfil}%
+\end{beamercolorbox}%
+\begin{beamercolorbox}[wd=.10\paperwidth,ht=3.25ex,right,rightskip=2ex]{date in head/foot}%
+    \vbox to3.25ex{\vfil\hbox{\insertframenumber{} / \inserttotalframenumber}\vfil}%
+\end{beamercolorbox}}%
+}
+
+\setbeamertemplate{items}[circle]
+\setbeamertemplate{section in toc}[square]
+\setbeamertemplate{section in toc shaded}[default][60]
+
+
+\makeatother
+
+\mode
+<all>
+
