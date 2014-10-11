@@ -18,6 +18,9 @@
  * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
  * OF THIS SOFTWARE.
+ *
+ * The code that differs from Weston's config-parser.c (as of 2014-10-08) is
+ * written by Steve Dodier-Lazaro, 2014. Same license applies.
  */
 
 #include <string.h>

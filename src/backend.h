@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Martin Peres
+/* Copyright (c) 2014 Martin Peres, Steve Dodier-Lazaro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,8 @@ THE SOFTWARE.
 /**
  * \file backend.h
  * \author Martin Peres
- * \date 05-10-2014
+ * \author Steve Dodier-Lazaro
+ * \date 2014-10-05
  */
 
 /** Init the backend */
