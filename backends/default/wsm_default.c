@@ -38,7 +38,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA	02110-1301	USA
 #define WSM_DEFAULT_ALL_COMPOSITORS		"All Compositors"
 
 #define WSM_DEFAULT_DEFAULT_PATH		"*"
+#define WSM_DEFAULT_TEMPLATE_PATH		"?"
 #define WSM_DEFAULT_DEFAULT_UID			-1
+
+#define WSM_DEFAULT_KEY_EXECUTABLE		"Exec"
+#define WSM_DEFAULT_KEY_TEMPLATE		"Template"
 
 #define WSM_SCREENSHOT "WSM_SCREENSHOT"
 #define WSM_SCREENSHARING "WSM_SCREENSHARING"
@@ -68,6 +72,7 @@ struct wsm_default_client_t{
 struct wsm_app_policy_t {
 	unsigned int		 	 version;
 	char					*exe_path;
+	char					*template_name;
 	signed long				 uid;		/* Can be -1 for the default UID */
 	struct weston_config	*config;
 	struct wl_list		 	 link;
@@ -94,6 +99,7 @@ struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const 
 void wsm_app_policy_register(struct wsm_default_t *global, struct wsm_app_policy_t *policy);
 void wsm_app_policy_free(struct wsm_app_policy_t *policy);
 struct wsm_app_policy_t *wsm_app_policy_lookup(struct wsm_default_t *global, const char *exe_path, const signed long uid);
+struct wsm_app_policy_t *wsm_app_template_lookup(struct wsm_default_t *global, const char *template_name, const signed long uid);
 
 static int _string_starts_with(const char *str, const char *prefix)
 {
@@ -120,37 +126,51 @@ static int _string_ends_with(const char *str, const char *suffix)
 	}
 }
 
-struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const char *path, const signed long uid, short * const existed)
+static struct wsm_app_policy_t *_wsm_app_template_new(struct wsm_default_t *global, struct weston_config *config, const char *path, char *exe_path, char *template_name, const signed long uid, short * const existed)
 {
-	if (path == NULL)
-		return NULL;
+	struct wsm_app_policy_t	*existing = NULL;
 
-	// Factorising for later, will set to 1 when a policy is found to exist
-	if (existed)
-		*existed=0;
-
-	struct weston_config *config;
-	struct weston_config_section *section;
-	char *exe_path = NULL;
-
-	config = weston_config_parse(path);
-	if (config != NULL) {
-		DEBUG("Default Backend: wsm_app_policy_new: Using config file '%s'\n", weston_config_get_full_path(config));
-	} else {
-		DEBUG("Default Backend: wsm_app_policy_new: Could not parse policy file '%s'.\n", path);
-	}
-	section = weston_config_get_section(config, "Wayland Security Entry", NULL, NULL);
-	weston_config_section_get_string(section, "Exec", &exe_path, NULL);
-
-	if (!exe_path) {
-		DEBUG("Default Backend: wsm_app_policy_new: Policy file '%s' is missing an executable path and will be discarded.\n", path);
+	if (!template_name) {
+		DEBUG("Default Backend: wsm_app_policy_new: Template policy file '%s' is missing a name and will be discarded.\n", path);
 		weston_config_destroy(config);
+		free(exe_path);
 		return NULL;
 	}
 
+	if ((existing = wsm_app_template_lookup(global, template_name, uid)) != NULL)
+	{
+		DEBUG("Default Backend: wsm_app_policy_new: Found an existing template for template name '%s;%ld'.\n", template_name, uid);
+		if (existed)
+			*existed=1;
+
+		free(exe_path);
+		if (template_name) free(template_name);
+		weston_config_destroy(config);
+		return existing;
+	} else {
+		if (existed)
+			*existed=0;
+		struct wsm_app_policy_t *policy = malloc(sizeof(struct wsm_app_policy_t));
+		policy->version = (const unsigned int) 1;
+		policy->uid = uid;
+		policy->exe_path = exe_path;
+		policy->template_name = template_name;
+		policy->config = config;
+		DEBUG("Default Backend: wsm_app_policy_new: Created a new template for '%s;%ld'.\n", template_name, uid);
+
+		wsm_app_policy_register(global, policy);
+		return policy;
+	}
+}
+
+//TODO static struct wsm_app_policy_t *_wsm_app_override_new(...);
+
+static struct wsm_app_policy_t *_wsm_app_policy_new(struct wsm_default_t *global, struct weston_config *config, const char *path, char *exe_path, char *template_name, const signed long uid, short * const existed)
+{
 	if (!_string_starts_with(exe_path, "/") && strcmp(exe_path, WSM_DEFAULT_DEFAULT_PATH)) {
 		DEBUG("Default Backend: wsm_app_policy_new: Policy file '%s' 's executable path should be an absolute path or the wildcard '%s' (which matches all executables).\n", path, WSM_DEFAULT_DEFAULT_PATH);
 		free(exe_path);
+		if (template_name) free(template_name);
 		weston_config_destroy(config);
 		return NULL;
 	}
@@ -163,21 +183,78 @@ struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const 
 		if (existed)
 			*existed=1;
 
-		weston_config_destroy(config);
 		free(exe_path);
+		if (template_name) free(template_name);
+		weston_config_destroy(config);
 		return existing;
 	} else {
-		DEBUG("Default Backend: wsm_app_policy_new: Created a new policy for '%s;%ld'.\n", exe_path, uid);
+		if (existed)
+			*existed=0;
 		struct wsm_app_policy_t *policy = malloc(sizeof(struct wsm_app_policy_t));
 		policy->version = (const unsigned int) 1;
 		policy->exe_path = exe_path;
 		policy->uid = uid;
-		policy->config = config;
+
+		if (template_name) {
+			DEBUG("Default Backend: wsm_app_policy_new: Created a new policy for '%s;%ld' after template '%s'.\n", exe_path, uid, template_name);
+			weston_config_destroy(config);
+			policy->config = NULL;
+			policy->template_name = template_name;
+		} else {
+			DEBUG("Default Backend: wsm_app_policy_new: Created a new policy for '%s;%ld'.\n", exe_path, uid);
+			policy->config = config;
+			policy->template_name = NULL;
+		}
 
 		wsm_app_policy_register(global, policy);
-
 		return policy;
 	}
+}
+
+/* DO NOT MODIFY THIS FUNCTION without adapting _wsm_app_*_new. Pay particular
+ * attention to the fact that the ownership of exe_path, template_name and
+ * config is transferred to said functions. */
+struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const char *path, const signed long uid, short * const existed)
+{
+	if (path == NULL)
+		return NULL;
+
+	struct weston_config *config;
+	struct weston_config_section *section;
+	char *exe_path = NULL;
+	char *template_name = NULL;
+
+	config = weston_config_parse(path);
+	if (config != NULL) {
+		DEBUG("Default Backend: wsm_app_policy_new: Using config file '%s'\n", weston_config_get_full_path(config));
+	} else {
+		DEBUG("Default Backend: wsm_app_policy_new: Could not parse policy file '%s'.\n", path);
+	}
+	section = weston_config_get_section(config, "Wayland Security Entry", NULL, NULL);
+
+	weston_config_section_get_string(section, WSM_DEFAULT_KEY_EXECUTABLE, &exe_path, NULL);
+	if (!exe_path) {
+		DEBUG("Default Backend: wsm_app_policy_new: Policy file '%s' is missing an executable path and will be discarded.\n", path);
+		weston_config_destroy(config);
+		return NULL;
+	}
+
+	weston_config_section_get_string(section, WSM_DEFAULT_KEY_TEMPLATE, &template_name, NULL);
+
+	/* Template file */
+	if (strcmp(exe_path, WSM_DEFAULT_TEMPLATE_PATH) == 0) {
+		DEBUG("Default Backend: wsm_app_policy_new: Policy file '%s' is a policy template named '%s'.\n", path, template_name);
+		return _wsm_app_template_new(global, config, path, exe_path, template_name, uid, existed);
+	}
+	/* Override file (TODO) */
+	else if (0) {
+		//TODO create override
+		//TODO check if template_name and exe_path need to be freed
+		//return _wsm_app_override_new(global, config, path, exe_path, uid, existed);
+	}
+	/* Normal file (either app-specific or default policy */
+	else
+		return _wsm_app_policy_new(global, config, path, exe_path, template_name, uid, existed);
 }
 
 void wsm_app_policy_register(struct wsm_default_t *global, struct wsm_app_policy_t *policy)
@@ -190,8 +267,13 @@ void wsm_app_policy_free(struct wsm_app_policy_t *policy)
 	if (!policy)
 		return;
 
-	free(policy->exe_path);
-	weston_config_destroy(policy->config);
+	if (policy->exe_path)
+		free(policy->exe_path);
+	if (policy->template_name)
+		free(policy->template_name);
+	if (policy->config)
+		weston_config_destroy(policy->config);
+
 	free(policy);
 }
 
@@ -208,6 +290,30 @@ struct wsm_app_policy_t *wsm_app_policy_lookup(struct wsm_default_t *global, con
 	}
 
 	return NULL;
+}
+
+struct wsm_app_policy_t *wsm_app_template_lookup(struct wsm_default_t *global, const char *template_name, const signed long uid)
+{
+	if(!template_name || (uid < 0 && uid != WSM_DEFAULT_DEFAULT_UID))
+		return NULL;
+
+	struct wsm_app_policy_t *policy;
+
+	wl_list_for_each(policy, &global->app_policies, link) {
+		if (strcmp(policy->template_name, template_name) == 0 && policy->uid == uid)
+			return policy;
+	}
+
+	return NULL;
+}
+
+static int wsm_app_policy_resolve_template (struct wsm_default_t *global, struct wsm_app_policy_t *policy)
+{
+	int has_template	= 0;
+
+	//TODO
+
+	return 0;
 }
 
 static int _filter_uid(const struct dirent *dir)
@@ -414,18 +520,24 @@ void *client_new(wsm_client_info_t info)
 		return NULL;
 	}
 
-	pol = wsm_app_policy_lookup(global, info.fullpath, info.uid);
-	if (!pol)
-		pol = wsm_app_policy_lookup(global, info.fullpath, WSM_DEFAULT_DEFAULT_UID);
-	if (!pol)
-		pol = wsm_app_policy_lookup(global, WSM_DEFAULT_DEFAULT_PATH, info.uid);
-	if (!pol)
-		pol = wsm_app_policy_lookup(global, WSM_DEFAULT_DEFAULT_PATH, WSM_DEFAULT_DEFAULT_UID);
+	int has_template;
+	if ((pol = wsm_app_policy_lookup(global, info.fullpath, info.uid)) != NULL)
+		has_template = wsm_app_policy_resolve_template(global, pol);
+	else if ((pol = wsm_app_policy_lookup(global, info.fullpath, WSM_DEFAULT_DEFAULT_UID)) != NULL)
+		has_template = wsm_app_policy_resolve_template(global, pol);
+	else if ((pol = wsm_app_policy_lookup(global, WSM_DEFAULT_DEFAULT_PATH, info.uid)) != NULL)
+		has_template = wsm_app_policy_resolve_template(global, pol);
+	else if ((pol = wsm_app_policy_lookup(global, WSM_DEFAULT_DEFAULT_PATH, WSM_DEFAULT_DEFAULT_UID)) != NULL)
+		has_template = wsm_app_policy_resolve_template(global, pol);
 
 	if (!pol) {
 		DEBUG("Default Backend: No policy could be found for client '%s\tUID:%d\tPID:%d', this is probably a bug in the backend or a mistake in your system configuration.\n", info.fullpath, info.uid, info.pid);
 		free(client);
 		return NULL;
+	}
+
+	if (has_template) {
+		DEBUG("Default Backend: The policy for client '%s\tUID:%d\tPID:%d' is a template named '%s'.\n", info.fullpath, info.uid, info.pid, pol->template_name);
 	}
 
 	client->info = info;
