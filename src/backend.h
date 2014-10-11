@@ -50,7 +50,10 @@ typedef void * (*_client_new)(wsm_client_info_t info);
 typedef void * (*_client_free)(void *user);
 
 /** Make a decision for a given client, capability and object */
-typedef char * (*_get_permission)(void *user, const char *capability, const char *object);
+typedef wsm_decision_t (*_get_permission)(void *user, const char *capability, const char *object);
+
+/** Make a decision, supporting custom answers */
+typedef char * (*_get_custom_permission)(void *user, const char *capability, const char *object);
 
 struct wsm_priv_t
 {
@@ -69,6 +72,7 @@ struct wsm_priv_t
 	_client_free client_free;
 
 	_get_permission get_permission;
+	_get_custom_permission get_custom_permission;
 };
 
 struct wsm_client_priv_t

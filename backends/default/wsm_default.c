@@ -554,13 +554,11 @@ void client_free(void *generic_client)
 	free(client);
 }
 
-
-
-char *get_permission(void *generic_client, const char *capability, const char *object)
+static char *_get_permission(void *generic_client, const char *capability, const char *object)
 {
 	if(!_wsm_default_global) {
 		DEBUG("Default Backend: get_permission: libwsm attempted to ask the default backend to make a security decision before initialising the backend. This is a bug, please report it to the libwsm developers.\n");
-		return NULL;
+		return WSM_DECISION_ERROR;
 	}
 
 	struct wsm_default_t			*global		= _wsm_default_global;
@@ -583,13 +581,12 @@ char *get_permission(void *generic_client, const char *capability, const char *o
 	if (!section)
 		section = weston_config_get_section_with_key(client->policy, WSM_DEFAULT_ALL_COMPOSITORS, capability);
 	if (!section)
-		return strdup(WSM_SOFT_DENY); /* no compatible policy for this compositor */
+		return strdup(WSM_SOFT_DENY_KEY); /* no compatible policy for this compositor */
 	else {
 		char *value = NULL;
 		if (!weston_config_section_get_string(section, capability, &value, NULL)) {
 			int is_array = 0; //FIXME implement support for array capabilities
 			//TODO parse to verify of it's an array.
-
 			if(is_array) {
 				//TODO find object-matching value
 				//TODO strdup matching value into a new variable
@@ -603,5 +600,29 @@ char *get_permission(void *generic_client, const char *capability, const char *o
 		}
 	}
 
-	return strdup(WSM_SOFT_DENY); /* no policy for this capability */
+	return strdup(WSM_SOFT_DENY_KEY); /* no policy for this capability */
+}
+
+/* TODO: refactor config to add integers to keys at file loading time for performance */
+wsm_decision_t get_permission(void *generic_client, const char *capability, const char *object)
+{
+	char			*perm	= _get_permission(generic_client, capability, object);
+	wsm_decision_t	 dec	= WSM_DECISION_ERROR;
+
+	if (strcmp (perm, WSM_DENY_KEY) == 0)
+		dec = WSM_DECISION_DENY;
+	else if (strcmp (perm, WSM_SOFT_DENY_KEY) == 0)
+		dec = WSM_DECISION_SOFT_DENY;
+	else if (strcmp (perm, WSM_SOFT_ALLOW_KEY) == 0)
+		dec = WSM_DECISION_SOFT_ALLOW;
+	else if (strcmp (perm, WSM_ALLOW_KEY) == 0)
+		dec = WSM_DECISION_ALLOW;
+
+	free (perm);
+	return dec;
+}
+
+char *get_custom_permission(void *generic_client, const char *capability, const char *object)
+{
+	return _get_permission(generic_client, capability, object);
 }

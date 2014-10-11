@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014 Martin Peres
+Copyright (c) 2014 Martin Peres, Steve Dodier-Lazaro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,15 +27,24 @@ THE SOFTWARE.
 /**
  * \file libwsm.h
  * \author MùPùF - Martin Peres (martin dot peres at free dot fr)
+ * \author Steve Dodier-Lazaro (sidnioulz@gmail.com)
  * \date 05-10-2014
  */
 
 #include <sys/types.h>
 
-#define WSM_SOFT_ALLOW "soft-allow"
-#define WSM_SOFT_DENY "soft-deny"
-#define WSM_ALLOW "allow"
-#define WSM_DENY "deny"
+#define WSM_SOFT_ALLOW_KEY "soft-allow"
+#define WSM_SOFT_DENY_KEY "soft-deny"
+#define WSM_ALLOW_KEY "allow"
+#define WSM_DENY_KEY "deny"
+
+typedef enum wsm_decision_t {
+	WSM_DECISION_DENY=-2,
+	WSM_DECISION_SOFT_DENY=-1,
+	WSM_DECISION_ERROR=0,
+	WSM_DECISION_SOFT_ALLOW=1,
+	WSM_DECISION_ALLOW=2
+} wsm_decision_t;
 
 typedef struct wsm_t {} wsm_t;
 typedef struct wsm_client_t {} wsm_client_t;
@@ -55,6 +64,8 @@ void wsm_client_free(wsm_client_t *wsm_client);
 
 wsm_client_info_t wsm_client_info_get(wsm_client_t *wsm_client);
 
-char *wsm_client_get_permission(wsm_client_t *wsm_client, const char *capability, const char *object);
+wsm_decision_t wsm_client_get_permission(wsm_client_t *wsm_client, const char *capability, const char *object);
+
+char *wsm_client_get_custom_permission(wsm_client_t *wsm_client, const char *capability, const char *object);
 
 #endif

@@ -70,10 +70,11 @@ static wsm_t *_load_backend(const char *dir_path, const char *filename, const ch
 	w_p->client_new = (_client_new)dlsym(dlhandle, "client_new");
 	w_p->client_free = (_client_free)dlsym(dlhandle, "client_free");
 	w_p->get_permission = (_get_permission)dlsym(dlhandle, "get_permission");
+	w_p->get_custom_permission = (_get_custom_permission)dlsym(dlhandle, "get_custom_permission");
 
 	/* if minimal functions are here, add the lib to available backends */
 	if(!w_p->ctor || !w_p->dtor || !w_p->get_backend_name ||
-	   !w_p->get_ABI_version || !w_p->client_new || !w_p->client_free || !w_p->get_permission) {
+	   !w_p->get_ABI_version || !w_p->client_new || !w_p->client_free || !w_p->get_permission || !w_p->get_custom_permission) {
 		DEBUG("Not all symbols are present in backend '%s', check the backend's ABI number is '%i' and report a bug against the backend if they match.\n", filename, CURRENT_ABI_NUMBER);
 		goto error;
 	}

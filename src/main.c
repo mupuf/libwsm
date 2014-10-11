@@ -102,12 +102,22 @@ wsm_client_info_t wsm_client_info_get(wsm_client_t *wsm_client)
 	return c_p->info;
 }
 
-char *wsm_client_get_permission(wsm_client_t *wsm_client, const char *capability, const char *object)
+wsm_decision_t wsm_client_get_permission(wsm_client_t *wsm_client, const char *capability, const char *object)
+{
+	struct wsm_client_priv_t *c_p = wsm_client_priv(wsm_client);
+
+	if (!wsm_client)
+		return WSM_DECISION_ERROR;
+
+	return c_p->wsm_p->get_permission(c_p->user, capability, object);
+}
+
+char *wsm_client_get_custom_permission(wsm_client_t *wsm_client, const char *capability, const char *object)
 {
 	struct wsm_client_priv_t *c_p = wsm_client_priv(wsm_client);
 
 	if (!wsm_client)
 		return NULL;
 
-	return c_p->wsm_p->get_permission(c_p->user, capability, object);
+	return c_p->wsm_p->get_custom_permission(c_p->user, capability, object);
 }
