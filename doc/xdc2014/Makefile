@@ -32,7 +32,7 @@
 
 # $Id: Makefile,v 1.18 2006-06-19 10:58:11 mairas Exp $
 
-export TEXINPUTS:=.:./figures:./listings:$(TEXINPUTS)
+export TEXINPUTS:=.//:./figures:./listings:$(TEXINPUTS)
 
 LATEX	= pdflatex
 BIBTEX	= bibtex
