@@ -23,7 +23,7 @@ OPTION(WSM_BUILD_BACKENDS "Build the integrated WSM backends" ON)
 OPTION(WSM_BE_DEFAULT "Example backend" ON)
 
 IF(NOT WSM_BUILD_BACKENDS)
-  SET(WSM_BE_EXAMPLE OFF)
+        SET(WSM_BE_EXAMPLE OFF)
 ENDIF(NOT WSM_BUILD_BACKENDS)
 
 #Tell libWSM where to find the backends
@@ -43,21 +43,23 @@ ENDIF(WAYLAND_SERVER_FOUND)
 
 # libWSM library
 IF(WSM_LIB)
-  ADD_LIBRARY(wsm SHARED "src/main.c" "src/backend.c" "src/backend.h" "include/libwsm.h")
-  SET_PROPERTY(TARGET wsm PROPERTY VERSION 0.1.0)
-  SET_PROPERTY(TARGET wsm PROPERTY SOVERSION 1)
-  TARGET_LINK_LIBRARIES(wsm ${WAYLAND_SERVER_LIBRARIES})
-  INSTALL(TARGETS wsm DESTINATION lib)
-  INSTALL(FILES "${CMAKE_SOURCE_DIR}/include/wsm.h" DESTINATION include)
-  INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/include/wsm" DESTINATION include)
+	FILE(GLOB_RECURSE wsm_include_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "include/*.h")
+	FILE(GLOB_RECURSE wsm_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.[ch]")
+	ADD_LIBRARY(wsm SHARED ${wsm_SOURCES} ${wsm_include_SOURCES})
+	SET_PROPERTY(TARGET wsm PROPERTY VERSION 0.1.0)
+	SET_PROPERTY(TARGET wsm PROPERTY SOVERSION 1)
+	TARGET_LINK_LIBRARIES(wsm ${WAYLAND_SERVER_LIBRARIES})
+	INSTALL(TARGETS wsm DESTINATION lib)
+	INSTALL(FILES "${CMAKE_SOURCE_DIR}/include/wsm.h" DESTINATION include)
+	INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/include/wsm" DESTINATION include)
 ENDIF(WSM_LIB)
 
 # Example backend
 IF(WSM_BE_DEFAULT)
-   FILE(GLOB wsm_be_default_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "backends/default/*.[ch]")
-   ADD_LIBRARY(wsm_default MODULE ${wsm_be_default_SOURCES})
-   TARGET_LINK_LIBRARIES(wsm_default wsm)
-   INSTALL(TARGETS wsm_default DESTINATION lib/wsm/)
+	FILE(GLOB wsm_be_default_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "backends/default/*.[ch]")
+	ADD_LIBRARY(wsm_default MODULE ${wsm_be_default_SOURCES})
+	TARGET_LINK_LIBRARIES(wsm_default wsm)
+	INSTALL(TARGETS wsm_default DESTINATION lib/wsm/)
 ENDIF(WSM_BE_DEFAULT)
 
 #PKG-CONFIG
@@ -68,7 +70,6 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libwsm.pc" DESTINATION lib/pkgconfig)
 # Test
 add_executable(test_base "tests/base.c" "tests/unix_socket.c" "tests/unix_socket.h")
 target_link_libraries(test_base wsm "dl")
-
 
 #Final summary
 MESSAGE("")
