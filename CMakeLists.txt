@@ -48,7 +48,7 @@ IF(WSM_LIB)
 	ADD_LIBRARY(wsm SHARED ${wsm_SOURCES} ${wsm_include_SOURCES})
 	SET_PROPERTY(TARGET wsm PROPERTY VERSION 0.1.0)
 	SET_PROPERTY(TARGET wsm PROPERTY SOVERSION 1)
-	TARGET_LINK_LIBRARIES(wsm ${WAYLAND_SERVER_LIBRARIES})
+	TARGET_LINK_LIBRARIES(wsm ${WAYLAND_SERVER_LIBRARIES} dl)
 	INSTALL(TARGETS wsm DESTINATION lib)
 	INSTALL(FILES "${CMAKE_SOURCE_DIR}/include/wsm.h" DESTINATION include)
 	INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/include/wsm" DESTINATION include)
@@ -69,7 +69,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libwsm.pc" DESTINATION lib/pkgconfig)
 
 # Test
 add_executable(test_base "tests/base.c" "tests/unix_socket.c" "tests/unix_socket.h")
-target_link_libraries(test_base wsm "dl")
+target_link_libraries(test_base wsm)
 
 #Final summary
 MESSAGE("")
