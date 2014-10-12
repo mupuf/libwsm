@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 #include <libwsm.h>
 #include "backend.h"
-#include "debug.h"
+#include <wsm/debug.h>
 
 static struct wsm_client_priv_t *wsm_client_priv(wsm_client_t *wsm_client)
 {

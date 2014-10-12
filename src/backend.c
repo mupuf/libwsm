@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include <unistd.h>
 
 #include "backend.h"
-#include "debug.h"
+#include <wsm/debug.h>
 
 #define CURRENT_ABI_NUMBER 1
 

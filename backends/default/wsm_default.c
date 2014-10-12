@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA	02110-1301	USA
 #include <wayland-util.h>
 #include "config-parser.h"
 
-#include "debug.h"
+#include <wsm/debug.h>
 
 #define TMP_PREFIX					 	"../data/"
 #define WSM_DEFAULT_POLICY_DIR			TMP_PREFIX"security/wsm/default"
