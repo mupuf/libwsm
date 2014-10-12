@@ -418,7 +418,7 @@ static int _init_policy_list(struct wsm_default_t *global)
 	} else
 		DEBUG("Default Backend: %d %s found.\n", nb_users, (nb_users!=1? "user directories":"user directory"));
 
-	if (nb_users > 0) {	
+	if (nb_users > 0) {
 		size_t pathlen = strlen(WSM_DEFAULT_POLICY_PER_USER_DIR);
 		int i;
 		for (i=0; i<nb_users; ++i) {
@@ -426,7 +426,7 @@ static int _init_policy_list(struct wsm_default_t *global)
 			char *folder_path = malloc(pathlen + strlen(ent->d_name) + 2);
 			sprintf(folder_path, "%s/%s", WSM_DEFAULT_POLICY_PER_USER_DIR, ent->d_name);
 			long uid = strtol(ent->d_name, 0, 10);
-		
+
 			int nb_policies = scan_policy_folder(global, folder_path, uid);
 			if (nb_policies < 0) {
 				DEBUG("Default Backend: An error occurred when looking for policies in '%s'.\n", folder_path);
