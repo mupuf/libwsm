@@ -35,9 +35,9 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <wsm/debug.h>
 #include <wayland-util.h>
 #include "config-parser.h"
-
 #define container_of(ptr, type, member) ({				\
 	const __typeof__( ((type *)0)->member ) *__mptr = (ptr);	\
 	(type *)( (char *)__mptr - offsetof(type,member) );})
@@ -368,8 +368,7 @@ weston_config_parse(const char *name)
 		case '[':
 			p = strchr(&line[1], ']');
 			if (!p || p[1] != '\n') {
-				fprintf(stderr, "malformed "
-					"section header: %s\n", line);
+				DEBUG("malformed section header: %s\n", line);
 				fclose(fp);
 				weston_config_destroy(config);
 				return NULL;
@@ -380,8 +379,7 @@ weston_config_parse(const char *name)
 		default:
 			p = strchr(line, '=');
 			if (!p || p == line || !section) {
-				fprintf(stderr, "malformed "
-					"config line: %s\n", line);
+				DEBUG("malformed config line: %s\n", line);
 				fclose(fp);
 				weston_config_destroy(config);
 				return NULL;
