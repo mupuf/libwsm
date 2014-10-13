@@ -300,7 +300,7 @@ struct wsm_app_policy_t *wsm_app_template_lookup(struct wsm_default_t *global, c
 	struct wsm_app_policy_t *policy;
 
 	wl_list_for_each(policy, &global->app_policies, link) {
-		if (strcmp(policy->template_name, template_name) == 0 && policy->uid == uid)
+		if (strcmp(policy->template_name, template_name) == 0 && (strcmp(policy->exe_path, WSM_DEFAULT_TEMPLATE_PATH) == 0) && (policy->uid == uid))
 			return policy;
 	}
 
