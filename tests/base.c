@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Impossible to run the 'fullpath' check. "
 				"Run the test with an absolute path.\n");
 
-	char *permission = wsm_client_get_custom_permission(wsm_client, "_WESTON_FULLSCREEN", NULL);
+	char *permission = wsm_client_get_custom_permission(wsm_client, "_TESTING_CAPABILITY", NULL);
 	assert(permission);
 	free(permission);
 
