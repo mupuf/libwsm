@@ -58,6 +58,12 @@ Ability to paste from the clipboard
 **WSM_RAISE_FOCUS** `default: soft-allow`
 Ability to raise the window and grab focus programmatically
 
+**WSM_NOTIFICATION_API** `default: soft-allow`
+Ability to use the libnotify API to raise notifications
+
+**WSM_CUSTOM_NOTIFICATION_API** `default: soft-deny`
+Ability to build custom notification UIs and have them displayed (i.e., raised and positioned for a set duration) by the compositor
+
 Possible future capabilities not related to the Graphic Stack
 -------------------------------------------------------------
 **DSM_RECORD_VIDEO** `default: soft-deny`
@@ -80,4 +86,12 @@ Ability to act as an authentication UI
 
 **DSM_PERMISSION_UI** `default: deny`
 Ability to act as a permission UI
+
+
+Things LibWSM is currently bad at
+---------------------------------
+
+**Expressing policies that apply only in certain modes of a Wayland compositor** This won't be fixed unless a compositor developer can convince us that their compositor implements different desktops that their users conceive as entirely distinct (e.g., KDE?)
+
+**Adding options to capabilities** e.g., on the notification API, different decisions for focus raising, custom UI, actions, UI positioning... Support is desirable but will complicate policy a great deal. Feedback is wanted from DE developers
 
