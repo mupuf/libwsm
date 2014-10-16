@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA	02110-1301	USA
 #define WSM_DEFAULT_TEMPLATE_PATH		"?"
 #define WSM_DEFAULT_DEFAULT_UID			-1
 
+#define WSM_DEFAULT_MAIN_SECTION_KEY	"Wayland Security Entry"
 #define WSM_DEFAULT_KEY_EXECUTABLE		"Exec"
 #define WSM_DEFAULT_KEY_TEMPLATE		"Template"
 
@@ -230,7 +231,7 @@ struct wsm_app_policy_t *wsm_app_policy_new(struct wsm_default_t *global, const 
 	} else {
 		DEBUG("Default Backend: wsm_app_policy_new: Could not parse policy file '%s'.\n", path);
 	}
-	section = weston_config_get_section(config, "Wayland Security Entry", NULL, NULL);
+	section = weston_config_get_section(config, WSM_DEFAULT_MAIN_SECTION_KEY, NULL, NULL);
 
 	weston_config_section_get_string(section, WSM_DEFAULT_KEY_EXECUTABLE, &exe_path, NULL);
 	if (!exe_path) {
@@ -300,20 +301,11 @@ struct wsm_app_policy_t *wsm_app_template_lookup(struct wsm_default_t *global, c
 	struct wsm_app_policy_t *policy;
 
 	wl_list_for_each(policy, &global->app_policies, link) {
-		if (strcmp(policy->template_name, template_name) == 0 && (strcmp(policy->exe_path, WSM_DEFAULT_TEMPLATE_PATH) == 0) && (policy->uid == uid))
+		if (policy->template_name && strcmp(policy->template_name, template_name) == 0 && (strcmp(policy->exe_path, WSM_DEFAULT_TEMPLATE_PATH) == 0) && (policy->uid == uid))
 			return policy;
 	}
 
 	return NULL;
-}
-
-static int wsm_app_policy_resolve_template (struct wsm_default_t *global, struct wsm_app_policy_t *policy)
-{
-	int has_template	= 0;
-
-	//TODO
-
-	return 0;
 }
 
 static int _filter_uid(const struct dirent *dir)
@@ -498,6 +490,19 @@ unsigned int get_ABI_version()
 	return 1;
 }
 
+static struct wsm_app_policy_t *_wsm_app_policy_lookup_and_resolve(struct wsm_default_t *global, const char *exe_path, const signed long uid)
+{
+	struct wsm_app_policy_t *pol = wsm_app_policy_lookup(global, exe_path, uid);
+
+	if (!pol)
+		return NULL;
+
+	if (pol->template_name)
+		return wsm_app_template_lookup(global, pol->template_name, pol->uid);
+	else
+		return pol;
+}
+
 void *client_new(wsm_client_info_t info)
 {
 	if(!_wsm_default_global) {
@@ -520,15 +525,11 @@ void *client_new(wsm_client_info_t info)
 		return NULL;
 	}
 
-	int has_template;
-	if ((pol = wsm_app_policy_lookup(global, info.fullpath, info.uid)) != NULL)
-		has_template = wsm_app_policy_resolve_template(global, pol);
-	else if ((pol = wsm_app_policy_lookup(global, info.fullpath, WSM_DEFAULT_DEFAULT_UID)) != NULL)
-		has_template = wsm_app_policy_resolve_template(global, pol);
-	else if ((pol = wsm_app_policy_lookup(global, WSM_DEFAULT_DEFAULT_PATH, info.uid)) != NULL)
-		has_template = wsm_app_policy_resolve_template(global, pol);
-	else if ((pol = wsm_app_policy_lookup(global, WSM_DEFAULT_DEFAULT_PATH, WSM_DEFAULT_DEFAULT_UID)) != NULL)
-		has_template = wsm_app_policy_resolve_template(global, pol);
+	if ((pol = _wsm_app_policy_lookup_and_resolve(global, info.fullpath, info.uid)) != NULL) {
+	} else if ((pol = _wsm_app_policy_lookup_and_resolve(global, info.fullpath, WSM_DEFAULT_DEFAULT_UID)) != NULL) {
+	} else if ((pol = _wsm_app_policy_lookup_and_resolve(global, WSM_DEFAULT_DEFAULT_PATH, info.uid)) != NULL) {
+	} else if ((pol = _wsm_app_policy_lookup_and_resolve(global, WSM_DEFAULT_DEFAULT_PATH, WSM_DEFAULT_DEFAULT_UID)) != NULL) {
+	}
 
 	if (!pol) {
 		DEBUG("Default Backend: No policy could be found for client '%s\tUID:%d\tPID:%d', this is probably a bug in the backend or a mistake in your system configuration.\n", info.fullpath, info.uid, info.pid);
@@ -536,7 +537,7 @@ void *client_new(wsm_client_info_t info)
 		return NULL;
 	}
 
-	if (has_template) {
+	if (pol->template_name) {
 		DEBUG("Default Backend: The policy for client '%s\tUID:%d\tPID:%d' is a template named '%s'.\n", info.fullpath, info.uid, info.pid, pol->template_name);
 	}
 
@@ -580,9 +581,10 @@ static char *_get_permission(void *generic_client, const char *capability, const
 	section = weston_config_get_section_with_key(client->policy, global->compositor_name, capability);
 	if (!section)
 		section = weston_config_get_section_with_key(client->policy, WSM_DEFAULT_ALL_COMPOSITORS, capability);
-	if (!section)
+	if (!section) {
+		DEBUG("Default Backend: get_permission: Client '%s:%d' asked to perform '%s' on object '%s', and it was denied by default because no relevant policy could be found.\n", client->info.fullpath, client->info.pid, capability, object);
 		return strdup(WSM_SOFT_DENY_KEY); /* no compatible policy for this compositor */
-	else {
+	} else {
 		char *value = NULL;
 		if (!weston_config_section_get_string(section, capability, &value, NULL)) {
 			int is_array = 0; //FIXME implement support for array capabilities
@@ -600,6 +602,7 @@ static char *_get_permission(void *generic_client, const char *capability, const
 		}
 	}
 
+	DEBUG("Default Backend: get_permission: Client '%s:%d' asked to perform '%s' on object '%s', and it was denied by default because no relevant policy could be found.\n", client->info.fullpath, client->info.pid, capability, object);
 	return strdup(WSM_SOFT_DENY_KEY); /* no policy for this capability */
 }
 
