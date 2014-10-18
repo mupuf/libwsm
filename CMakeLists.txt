@@ -18,7 +18,7 @@ INCLUDE_DIRECTORIES("include/" ${CMAKE_SOURCE_DIR}/src)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR})
 ADD_DEFINITIONS("-Wall -D_GNU_SOURCE")
 
-OPTION(WSM_LIB "PPassKeeper library" ON)
+OPTION(WSM_LIB "Wayland Security Modules library" ON)
 OPTION(WSM_BUILD_BACKENDS "Build the integrated WSM backends" ON)
 OPTION(WSM_BE_DEFAULT "Example backend" ON)
 
