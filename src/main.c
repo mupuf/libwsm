@@ -43,7 +43,7 @@ void wsm_fini(wsm_t *wsm)
 	wsm_unload_backend(wsm);
 }
 
-wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd)
+wsm_client_t *wsm_client_create(wsm_t *wsm, int client_fd)
 {
 	struct wsm_priv_t *wsm_p = wsm_priv(wsm);
 	struct wsm_client_priv_t *client_p;
@@ -73,12 +73,12 @@ wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd)
 	client_p->info.gid = cr.gid;
 	client_p->info.pid = cr.pid;
 	client_p->info.fullpath = wsm_get_path_from_pid(cr.pid);
-	client_p->user = wsm_p->client_new(client_p->info);
+	client_p->user = wsm_p->client_create(client_p->info);
 
 	return (wsm_client_t *)client_p;
 }
 
-void wsm_client_free(wsm_client_t *wsm_client)
+void wsm_client_destroy(wsm_client_t *wsm_client)
 {
 	struct wsm_client_priv_t *c_p = wsm_client_priv(wsm_client);
 
@@ -87,7 +87,7 @@ void wsm_client_free(wsm_client_t *wsm_client)
 
 	if (c_p->info.fullpath)
 		free(c_p->info.fullpath);
-	c_p->wsm_p->client_free(c_p->user);
+	c_p->wsm_p->client_destroy(c_p->user);
 	free(c_p);
 }
 

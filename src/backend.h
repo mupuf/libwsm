@@ -44,10 +44,10 @@ typedef const char* (*_get_backend_name)(void);
 typedef unsigned int (*_get_ABI_version)(void);
 
 /** Allocate a new client */
-typedef void * (*_client_new)(wsm_client_info_t info);
+typedef void * (*_client_create)(wsm_client_info_t info);
 
 /** Free a client */
-typedef void * (*_client_free)(void *user);
+typedef void * (*_client_destroy)(void *user);
 
 /** Make a decision for a given client, capability and object */
 typedef wsm_decision_t (*_get_permission)(void *user, const char *capability, const char *object);
@@ -68,8 +68,8 @@ struct wsm_priv_t
 	_get_backend_name get_backend_name;
 	_get_ABI_version get_ABI_version;
 
-	_client_new client_new;
-	_client_free client_free;
+	_client_create client_create;
+	_client_destroy client_destroy;
 
 	_get_permission get_permission;
 	_get_custom_permission get_custom_permission;

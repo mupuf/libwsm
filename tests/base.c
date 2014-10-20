@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 	wsm_t *wsm = wsm_init();
 	assert(wsm);
 
-	wsm_client_t *wsm_client = wsm_client_new(wsm, scfd);
+	wsm_client_t *wsm_client = wsm_client_create(wsm, scfd);
 	assert(wsm_client);
 
 	info = wsm_client_info_get(wsm_client);
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	wsm_decision_t dec = wsm_client_get_permission(wsm_client, "_WESTON_FULLSCREEN", NULL);
 	assert(dec != WSM_DECISION_ERROR);
 
-	wsm_client_free(wsm_client);
+	wsm_client_destroy(wsm_client);
 	wsm_fini(wsm);
 
 	close(scfd);

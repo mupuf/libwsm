@@ -503,7 +503,7 @@ static struct wsm_app_policy_t *_wsm_app_policy_lookup_and_resolve(struct wsm_de
 		return pol;
 }
 
-void *client_new(wsm_client_info_t info)
+void *client_create(wsm_client_info_t info)
 {
 	if(!_wsm_default_global) {
 		DEBUG("Default Backend: client_new: libwsm attempted to have the default backend initialise a policy for a new client but it is not initialised or has been deleted. This is a bug, please report it to the libwsm developers.\n");
@@ -547,7 +547,7 @@ void *client_new(wsm_client_info_t info)
 	return (void *) client;
 }
 
-void client_free(void *generic_client)
+void client_destroy(void *generic_client)
 {
 	struct wsm_default_client_t *client = (struct wsm_default_client_t *)generic_client;
 
