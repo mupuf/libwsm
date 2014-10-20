@@ -32,9 +32,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA	02110-1301	USA
 
 #include <wsm/debug.h>
 
-#define TMP_PREFIX					 	"../data/"
-#define WSM_DEFAULT_POLICY_DIR			TMP_PREFIX"security/wsm/default"
-#define WSM_DEFAULT_POLICY_PER_USER_DIR	TMP_PREFIX"security/wsm/per-user/default"
+#define WSM_DEFAULT_POLICY_DIR			WSM_DEFAULT_POLICY_PREFIX"/wsm/default"
+#define WSM_DEFAULT_POLICY_PER_USER_DIR		WSM_DEFAULT_POLICY_PREFIX"/wsm/per-user/default"
 #define WSM_DEFAULT_ALL_COMPOSITORS		"All Compositors"
 
 #define WSM_DEFAULT_DEFAULT_PATH		"*"
