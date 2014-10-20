@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	cfd = unix_socket_client_connect(UNIX_SOCKET_PATH); assert(cfd > 0);
 	scfd = unix_socket_server_accept(sfd); assert(cfd > 0);
 
-	wsm_t *wsm = wsm_init();
+	wsm_t *wsm = wsm_create();
 	assert(wsm);
 
 	wsm_client_t *wsm_client = wsm_client_create(wsm, scfd);
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 	assert(dec != WSM_DECISION_ERROR);
 
 	wsm_client_destroy(wsm_client);
-	wsm_fini(wsm);
+	wsm_destroy(wsm);
 
 	close(scfd);
 	close(cfd);

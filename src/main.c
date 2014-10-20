@@ -33,12 +33,12 @@ static struct wsm_client_priv_t *wsm_client_priv(wsm_client_t *wsm_client)
 	return (struct wsm_client_priv_t*) wsm_client;
 }
 
-wsm_t *wsm_init()
+wsm_t *wsm_create()
 {
 	return wsm_load_backend();
 }
 
-void wsm_fini(wsm_t *wsm)
+void wsm_destroy(wsm_t *wsm)
 {
 	wsm_unload_backend(wsm);
 }
