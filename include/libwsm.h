@@ -56,7 +56,7 @@ typedef struct wsm_client_info_t {
 	char *fullpath; /* TODO: Check for ABI problems */
 } wsm_client_info_t;
 
-wsm_t *wsm_init();
+wsm_t *wsm_init(void);
 void wsm_fini(wsm_t *wsm);
 
 wsm_client_t *wsm_client_new(wsm_t *wsm, int client_fd);
