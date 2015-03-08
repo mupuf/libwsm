@@ -43,23 +43,18 @@ void wsm_destroy(wsm_t *wsm)
 	wsm_unload_backend(wsm);
 }
 
-wsm_client_t *wsm_client_create(wsm_t *wsm, int client_fd)
+wsm_client_t *wsm_client_create(wsm_t *wsm, struct wl_client *client)
 {
 	struct wsm_priv_t *wsm_p = wsm_priv(wsm);
 	struct wsm_client_priv_t *client_p;
-	struct ucred cr;
-	socklen_t cr_len;
+	pid_t pid;
+	uid_t uid;
+	gid_t gid;
 
 	if (!wsm)
 		return NULL;
 
-	cr_len = sizeof (cr);
-	if (getsockopt (client_fd, SOL_SOCKET, SO_PEERCRED, &cr, &cr_len) ||
-	    cr_len != sizeof (cr)) {
-		DEBUG("Failed to retrieve the peer credentials: %s.\n",
-		      strerror(errno));
-		return NULL;
-	}
+	wl_client_get_credentials (client, &pid, &uid, &gid);
 
 	client_p = (struct wsm_client_priv_t *)malloc(sizeof(struct wsm_client_priv_t));
 	if (!client_p) {
@@ -68,11 +63,10 @@ wsm_client_t *wsm_client_create(wsm_t *wsm, int client_fd)
 	}
 
 	client_p->wsm_p = wsm_p;
-	client_p->info.fd = client_fd;
-	client_p->info.uid = cr.uid;
-	client_p->info.gid = cr.gid;
-	client_p->info.pid = cr.pid;
-	client_p->info.fullpath = wsm_get_path_from_pid(cr.pid);
+	client_p->info.uid = uid;
+	client_p->info.gid = gid;
+	client_p->info.pid = pid;
+	client_p->info.fullpath = wsm_get_path_from_pid(pid);
 	client_p->user = wsm_p->client_create(client_p->info);
 
 	return (wsm_client_t *)client_p;
