@@ -32,6 +32,7 @@ THE SOFTWARE.
  */
 
 #include <sys/types.h>
+#include <wayland-server.h>
 
 #define WSM_SOFT_ALLOW_KEY "soft-allow"
 #define WSM_SOFT_DENY_KEY "soft-deny"
@@ -49,7 +50,6 @@ typedef enum wsm_decision_t {
 typedef struct wsm_t {} wsm_t;
 typedef struct wsm_client_t {} wsm_client_t;
 typedef struct wsm_client_info_t {
-	int fd;
 	pid_t pid;
 	uid_t uid;
 	gid_t gid;
@@ -59,7 +59,7 @@ typedef struct wsm_client_info_t {
 wsm_t *wsm_create(void);
 void wsm_destroy(wsm_t *wsm);
 
-wsm_client_t *wsm_client_create(wsm_t *wsm, int client_fd);
+wsm_client_t *wsm_client_create(wsm_t *wsm, struct wl_client *client);
 void wsm_client_destroy(wsm_client_t *wsm_client);
 
 wsm_client_info_t wsm_client_info_get(wsm_client_t *wsm_client);

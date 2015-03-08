@@ -19,7 +19,7 @@ Backends can give four recommendations by default:
 
  - **Allow:** the policy allows the action to be performed. It is recommended to allow the action.
  - **Soft allow:** there probably is nothing wrong, but attacks could be carried out. It is recommended to provide feedback to the user about the action being performed.
- - **Soft allow:** the requesting app has not obtained the permission to perform the action. It is recommended to seek an alternative way to provide permission if desired (e.g., trusted UIs or permission prompt)
+ - **Soft deny:** the requesting app has not obtained the permission to perform the action. It is recommended to seek an alternative way to provide permission if desired (e.g., trusted UIs or permission prompt)
  - **Deny:** the action has been explicitly written as denied in the policy. It is recommended to follow the policy and deny the action without alternative.
 
 Other permissions can be defined. As a rule of thumb, when a compositor does not recognise a permission, *‘Deny’* should be followed.

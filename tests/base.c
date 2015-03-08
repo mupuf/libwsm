@@ -12,22 +12,28 @@
 
 int main(int argc, char **argv)
 {
-	int sfd, cfd, scfd;
+	int sfd, cfd;
+	int scfd[2];
+	struct wl_display *display;
+	struct wl_client *client;
 	wsm_client_info_t info;
 
 	sfd = unix_socket_server_create(UNIX_SOCKET_PATH); assert(sfd > 0);
 	cfd = unix_socket_client_connect(UNIX_SOCKET_PATH); assert(cfd > 0);
-	scfd = unix_socket_server_accept(sfd); assert(cfd > 0);
+	scfd[0] = sfd;
+	scfd[1] = cfd;
+
+	display = wl_display_create();
+	client = wl_client_create(display, scfd[0]);
 
 	wsm_t *wsm = wsm_create();
 	assert(wsm);
 
-	wsm_client_t *wsm_client = wsm_client_create(wsm, scfd);
+	wsm_client_t *wsm_client = wsm_client_create(wsm, client);
 	assert(wsm_client);
 
 	info = wsm_client_info_get(wsm_client);
 
-	assert(info.fd == scfd);
 	assert(info.pid == getpid());
 	assert(info.uid == getuid());
 	assert(info.gid == getgid());
@@ -49,7 +55,8 @@ int main(int argc, char **argv)
 	wsm_client_destroy(wsm_client);
 	wsm_destroy(wsm);
 
-	close(scfd);
+	wl_display_destroy(display);
+
 	close(cfd);
 	close(sfd);
 
